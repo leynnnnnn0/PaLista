@@ -6,7 +6,13 @@ import {
 } from '@/components/ui/accordion';
 import { login } from '@/routes';
 import { Link } from '@inertiajs/react';
-import LOGO from '../../images/logo.png';
+import Chart from '../../images/dashboard.png';
+import Financial from '../../images/financial.png';
+import Graph from '../../images/graph.png';
+import LOGO from '../../images/mainLogo.png';
+import MyPautang from '../../images/mypautangs.png';
+import { Download } from 'lucide-react';
+import Navigation from "../pages/navigation";
 
 export default function Welcome() {
     const faqs = [
@@ -16,77 +22,33 @@ export default function Welcome() {
         },
         {
             question: 'Who can use MyPautangLog?',
-            answer: 'Anyone who wants to organize their personal or business loan records. Ideal for small business owners, friends sharing expenses, or individuals tracking personal debts.',
+            answer: 'Anyone who wants to organize their personal or business loan records. Ideal for small business owners, friends sharing expenses, or individuals tracking  debts.',
         },
         {
             question: 'How is it different from a banking app?',
-            answer: 'Unlike banks, we focus on informal or personal loan records. You can log any transaction and set custom reminders without involving bank accounts.',
-        },
-        {
-            question: 'Is my data secure?',
-            answer: 'Yes. We use bank-grade encryption and ISO 27001 standards to ensure your private records remain private. Your data is never shared with third parties.',
+            answer: 'Unlike banks, we focus on informal or personal loan records. You can log any transaction without involving bank accounts.',
         },
         {
             question: 'What are your fees?',
-            answer: 'We offer a Free plan for basic tracking. Premium and Pro plans provide additional features like advanced reminders, multiple users, and reporting tools.',
+            answer: 'We offer a Free plan for basic tracking. Premium and Pro plans provide additional features like advanced reminders, staff accounts, and reporting tools.',
         },
         {
             question: 'How do I get started?',
-            answer: 'Sign up with your email or Google account and start logging your first transactions immediately.',
+            answer: 'Sign up with your account and start logging your first transactions immediately.',
         },
     ];
     return (
         <div className="min-h-screen bg-white font-sans text-[#1e293b]">
             {/* Navigation */}
-            <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-                <div className="flex items-center space-x-10">
-                    <div className="flex items-center space-x-2">
-                        <img src={LOGO} alt="Logo" className="h-10" />
-                    </div>
-                    {/* <div className="hidden space-x-6 text-sm font-semibold text-gray-600 md:flex">
-                        <a
-                            href="#features"
-                            className="transition hover:text-blue-700"
-                        >
-                            Features
-                        </a>
-                        <a
-                            href="#security"
-                            className="transition hover:text-blue-700"
-                        >
-                            Security
-                        </a>
-                        <a
-                            href="#faq"
-                            className="transition hover:text-blue-700"
-                        >
-                            FAQ
-                        </a>
-                        <a
-                            href="#contact"
-                            className="transition hover:text-blue-700"
-                        >
-                            Contact
-                        </a>
-                    </div> */}
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Link
-                        href={login.url()}
-                        className="rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-blue-800"
-                    >
-                        Login
-                    </Link>
-                </div>
-            </nav>
+            <Navigation />
 
             {/* Hero Section */}
             <main className="mx-auto grid max-w-7xl items-center gap-12 px-6 pt-12 pb-24 md:grid-cols-2">
                 {/* Left Column: Copy */}
                 <div className="space-y-8">
-                    <div className="inline-flex items-center space-x-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-1">
+                    <div className="inline-flex items-center space-x-2 rounded-md border border-green-200 bg-green-50 px-3 py-1">
                         <span className="text-[10px] font-bold tracking-widest text-gray-500 uppercase">
-                            🛡️ Private & Secure Ledger
+                            Designed for Filipino Lenders
                         </span>
                     </div>
 
@@ -104,10 +66,11 @@ export default function Welcome() {
 
                     <div className="flex items-center space-x-4">
                         <button className="rounded-xl bg-blue-700 px-8 py-4 font-bold text-white shadow-xl transition-all hover:-translate-y-0.5 hover:shadow-blue-200">
-                            Learn More
-                        </button>
-                        <button className="rounded-xl border border-gray-200 bg-white px-8 py-4 font-bold text-gray-900 transition hover:bg-gray-50">
                             Get Started
+                        </button>
+                        <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-8 py-4 font-bold text-gray-900 transition hover:bg-gray-50">
+                            <Download className="size-5" />
+                            Install App
                         </button>
                     </div>
 
@@ -124,19 +87,19 @@ export default function Welcome() {
                 <div className="group relative">
                     <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-blue-900 shadow-2xl">
                         {/* Background Image Placeholder */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-900 opacity-80 mix-blend-multiply" />
+                        <div className="absolute inset-0 opacity-80 mix-blend-multiply" />
                         <img
-                            src="https://images.unsplash.com/photo-1573163231162-8067345742a4?auto=format&fit=crop&q=80&w=800"
+                            src={Chart}
                             alt="Person managing finances"
                             className="h-full w-full object-cover"
                         />
 
                         {/* Dashboard Overlay (Matching the "Invoices" look) */}
-                        <div className="absolute inset-0 flex items-end justify-center px-8 pb-12">
+                        <div className="absolute top-10 right-0 flex items-end justify-center px-8">
                             <div className="w-full transform rounded-2xl bg-white/90 p-6 shadow-2xl backdrop-blur-xl transition-transform group-hover:scale-[1.02]">
                                 <div className="mb-6 flex items-center justify-between">
                                     <h3 className="text-xs font-black text-gray-400 uppercase">
-                                        Recent Loan Logs
+                                        Payment Schedules
                                     </h3>
                                     <span className="text-[10px] text-gray-400">
                                         Date: 25 Jan 2026
@@ -146,15 +109,15 @@ export default function Welcome() {
                                 <div className="space-y-4">
                                     {[
                                         {
-                                            name: 'Loan Record: Maria S.',
+                                            name: 'Jaslela Smith',
                                             amount: '₱15,000.00',
                                         },
                                         {
-                                            name: 'Borrow: Tech Supplies',
+                                            name: 'Milo Almoguera',
                                             amount: '₱2,450.50',
                                         },
                                         {
-                                            name: 'Loan Record: Juan Dela Cruz',
+                                            name: 'Mimi Alvarez',
                                             amount: '₱5,000.00',
                                         },
                                     ].map((item, i) => (
@@ -177,16 +140,6 @@ export default function Welcome() {
                                     your data.
                                 </p>
                             </div>
-                        </div>
-
-                        {/* Float Label */}
-                        <div className="absolute bottom-6 left-6 flex items-center space-x-2 rounded-lg bg-black/30 px-4 py-2 text-white backdrop-blur-md">
-                            <div className="flex h-5 w-5 items-center justify-center rounded bg-white/20">
-                                📊
-                            </div>
-                            <span className="text-xs font-bold tracking-tighter uppercase">
-                                Loan Management Dashboard
-                            </span>
                         </div>
                     </div>
                 </div>
@@ -244,11 +197,10 @@ export default function Welcome() {
                                     </div>
                                     <div>
                                         <p className="text-xs font-black text-slate-800 uppercase">
-                                            Payment Confirmed
+                                            Payment Recorded
                                         </p>
                                         <p className="text-xs text-slate-500">
-                                            Auto-logged and timestamped
-                                            instantly.
+                                            Timestamped instantly.
                                         </p>
                                     </div>
                                 </div>
@@ -339,9 +291,9 @@ export default function Welcome() {
                                 One log for <br /> all your needs
                             </h2>
                             <p className="text-lg text-slate-500">
-                                Track personal borrowings, business credits, and
-                                friendly loans. Everything is organized in a
-                                single private vault accessible only by you.
+                                Track business credits, and friendly loans.
+                                Everything is organized in a single private
+                                vault accessible only by you.
                             </p>
 
                             <ul className="space-y-5 pt-4">
@@ -382,18 +334,18 @@ export default function Welcome() {
                             </ul>
                         </div>
 
-                        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[2.5rem] border border-blue-100 bg-blue-50 shadow-inner md:aspect-video lg:aspect-square">
+                        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[2.5rem] bg-slate-50 shadow-inner md:aspect-video lg:aspect-square">
                             <img
-                                src="https://images.unsplash.com/photo-1454165833767-027ffea9e778?auto=format&fit=crop&q=80&w=800"
+                                src={MyPautang}
                                 alt="Organized Ledger"
-                                className="h-full w-full object-cover opacity-70 mix-blend-multiply"
+                                className="h-72 w-full rounded-lg bg-white p-3 mix-blend-multiply"
                             />
                             <div className="absolute rounded-2xl border border-blue-100 bg-white/90 px-6 py-4 shadow-xl backdrop-blur">
                                 <p className="mb-1 text-xs font-black tracking-widest text-blue-700 uppercase">
-                                    Entry Status
+                                    Track Aging
                                 </p>
                                 <p className="text-sm font-bold text-slate-800 italic">
-                                    "Payment for Grocery Supplies Logged"
+                                    "Past Due Dates"
                                 </p>
                             </div>
                         </div>
@@ -403,88 +355,55 @@ export default function Welcome() {
                     <div className="grid items-center gap-16 md:grid-cols-2">
                         {/* On mobile, this will move below the text due to 'order-2 md:order-1' */}
                         <div className="relative order-2 flex aspect-square flex-col justify-center rounded-[2.5rem] border border-slate-100 bg-slate-50 p-8 md:order-1">
-                            <div className="space-y-6 rounded-2xl bg-white p-6 shadow-xl">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-xs font-bold text-slate-400 uppercase">
-                                        Reminder Settings
-                                    </span>
-                                    <button className="rounded-md bg-slate-900 px-3 py-1 text-[10px] text-white">
-                                        Save Changes
-                                    </button>
-                                </div>
-                                <div className="space-y-4">
-                                    <p className="text-xs font-bold text-slate-700">
-                                        Notification Channels
-                                    </p>
-                                    <div className="flex gap-2">
-                                        {['📧 Email', '💬 SMS', '🔔 Push'].map(
-                                            (tag) => (
-                                                <span
-                                                    key={tag}
-                                                    className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-bold text-blue-700"
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ),
-                                        )}
-                                    </div>
-                                    <div className="border-t border-slate-100 pt-4">
-                                        <p className="mb-3 text-xs font-bold text-slate-700">
-                                            Custom Reminder Time
-                                        </p>
-                                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                                            <div className="h-full w-3/4 bg-blue-600"></div>
-                                        </div>
-                                        <div className="mt-2 flex justify-between text-[10px] font-bold text-slate-400 uppercase">
-                                            <span>3 Days Before</span>
-                                            <span className="text-blue-600">
-                                                Due Date
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {/* The Financial Summary Card Component */}
+                            <img src={Financial} alt="Financial Summary" />
                         </div>
 
                         <div className="order-1 space-y-6 md:order-2">
-                            <h2 className="text-4xl leading-tight font-extrabold tracking-tight text-slate-900">
-                                Take control of <br /> your debt history
-                            </h2>
-                            <p className="text-lg text-slate-500">
-                                Set custom reminders and manage exactly how you
-                                want to be notified. Keep your relationships
-                                healthy by never forgetting a commitment.
-                            </p>
-                            <ul className="space-y-5 pt-4">
+                            {/* Updated Contextual Header */}
+                            <div className="space-y-4">
+                                <h2 className="text-4xl leading-tight font-extrabold tracking-tight text-slate-900">
+                                    Track Every Peso <br /> of Your Lending
+                                </h2>
+                                <p className="text-lg text-slate-500">
+                                    Manage your receivables with precision.
+                                    Monitor outstanding balances, add penalties,
+                                    and verify payment progress to ensure your
+                                    capital is always accounted for.
+                                </p>
+                            </div>
+
+                            {/* Updated Lender Features List */}
+                            <ul className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-2 lg:grid-cols-1">
                                 {[
                                     {
-                                        icon: '⚙️',
-                                        title: 'Set rules on logs',
-                                        desc: 'Categorize by Personal, Business, or Family.',
+                                        icon: '⚖️',
+                                        title: 'Penalty Enforcement',
+                                        desc: 'Apply late fees based on custom grace periods.',
                                     },
                                     {
-                                        icon: '📅',
-                                        title: 'Due date alerts',
-                                        desc: 'Get notified via app or email before the deadline.',
+                                        icon: '📝',
+                                        title: 'Payment Logging',
+                                        desc: 'Record partial or full payments with date-stamped receipts.',
                                     },
                                     {
-                                        icon: '🖥️',
-                                        title: 'Detailed Admin Panel',
-                                        desc: 'View your total lending vs borrowing at a glance.',
+                                        icon: '📉',
+                                        title: 'Diminishing Balance',
+                                        desc: 'Watch the balance drop in real-time as logs are added.',
                                     },
                                 ].map((item, i) => (
                                     <li
                                         key={i}
                                         className="flex items-start space-x-4"
                                     >
-                                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-slate-100 bg-slate-50 text-lg shadow-sm">
+                                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white text-lg shadow-sm">
                                             {item.icon}
                                         </div>
                                         <div>
                                             <p className="text-sm font-bold text-slate-900">
                                                 {item.title}
                                             </p>
-                                            <p className="text-xs text-slate-500">
+                                            <p className="text-xs leading-relaxed text-slate-500">
                                                 {item.desc}
                                             </p>
                                         </div>
@@ -494,40 +413,40 @@ export default function Welcome() {
                         </div>
                     </div>
 
-                    {/* Feature 3: Security & Exporting (Text Left, Image Right) */}
+                    {/* Feature 3: Portfolio Insights (Text Left, Image Right) */}
                     <div className="grid items-center gap-16 md:grid-cols-2">
                         <div className="space-y-6">
-                            <div className="mb-2 inline-flex items-center space-x-2 rounded-md bg-green-50 px-3 py-1">
-                                <span className="text-[10px] font-bold tracking-widest text-green-600 uppercase">
-                                    Bank-Grade Privacy
+                            <div className="mb-2 inline-flex items-center space-x-2 rounded-md bg-blue-50 px-3 py-1">
+                                <span className="text-[10px] font-bold tracking-widest text-blue-600 uppercase">
+                                    Lender Analytics
                                 </span>
                             </div>
                             <h2 className="text-4xl leading-tight font-extrabold tracking-tight text-slate-900">
-                                Your data, <br /> your rules.
+                                A birds-eye view <br /> of your capital.
                             </h2>
                             <p className="text-lg text-slate-500">
-                                MyPautangLog is strictly a private
-                                record-keeping tool. We do not provide loans or
-                                connect you with lenders. Your records are
-                                encrypted and meant for your eyes only.
+                                Stop guessing your net worth. Monitor your total
+                                lent amount, accumulated interest, and actual
+                                collection rates in one centralized dashboard
+                                designed for modern lenders.
                             </p>
 
                             <ul className="space-y-5 pt-4">
                                 {[
                                     {
-                                        icon: '🔒',
-                                        title: 'End-to-End Encryption',
-                                        desc: 'Personal loan details are encrypted before they hit our servers.',
+                                        icon: '📈',
+                                        title: 'Collection Rate Tracking',
+                                        desc: 'See exactly what percentage of your expected returns have been collected.',
                                     },
                                     {
-                                        icon: '📊',
-                                        title: 'Export to PDF/CSV',
-                                        desc: 'Need a physical copy? Export your entire history in one click.',
+                                        icon: '💸',
+                                        title: 'Profit & Loss Metrics',
+                                        desc: 'Track net profit and cash flow to understand the health of your lending business.',
                                     },
                                     {
-                                        icon: '🛡️',
-                                        title: 'Fully Legal & Safe',
-                                        desc: 'A secure digital ledger that replaces risky paper trail habits.',
+                                        icon: '📅',
+                                        title: 'Scheduled vs. Actuals',
+                                        desc: 'Compare monthly scheduled dues against actual payments received via visual charts.',
                                     },
                                 ].map((item, i) => (
                                     <li
@@ -550,49 +469,14 @@ export default function Welcome() {
                             </ul>
                         </div>
 
+                        {/* Dashboard Visualization Component */}
                         <div className="group relative">
-                            <div className="flex aspect-square items-center justify-center overflow-hidden rounded-[2.5rem] bg-slate-900 p-1 shadow-2xl">
-                                <div className="relative flex h-full w-full items-center justify-center">
-                                    <div className="absolute inset-0 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
-                                    <div className="relative z-10 w-4/5 transform rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl transition-all group-hover:scale-105">
-                                        <div className="mb-4 flex items-center justify-between border-b pb-4">
-                                            <span className="text-[10px] font-black text-slate-400 uppercase">
-                                                Security Vault
-                                            </span>
-                                            <div className="flex space-x-1">
-                                                <div className="h-2 w-2 rounded-full bg-red-400"></div>
-                                                <div className="h-2 w-2 rounded-full bg-yellow-400"></div>
-                                                <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-4">
-                                            <div className="flex items-center justify-between rounded-xl bg-slate-50 p-3">
-                                                <span className="text-xs font-bold tracking-tight text-slate-600">
-                                                    Generate Report.pdf
-                                                </span>
-                                                <button className="rounded-lg bg-blue-600 px-3 py-1.5 text-[10px] font-bold text-white">
-                                                    Download
-                                                </button>
-                                            </div>
-                                            <div className="flex items-center justify-between rounded-xl bg-slate-50 p-3">
-                                                <span className="text-xs font-bold tracking-tight text-slate-600">
-                                                    Auto-Sync Status
-                                                </span>
-                                                <span className="text-[10px] font-black text-green-600 uppercase">
-                                                    Active
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="mt-6 flex justify-center">
-                                            <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-2">
-                                                <p className="text-center text-[9px] font-bold text-blue-700 italic">
-                                                    "Records verified & secured
-                                                    under ISO 27001 standards"
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div className="flex aspect-square items-center justify-center overflow-hidden rounded-[2.5rem] bg-slate-200 p-4 shadow-2xl">
+                                <img
+                                    src={Graph}
+                                    alt="Graph"
+                                    className="rounded-lg"
+                                />
                             </div>
                         </div>
                     </div>
@@ -636,8 +520,8 @@ export default function Welcome() {
                                 {[
                                     'Up to 20 active logs',
                                     'Up to 20 customers',
-                                    'Promissiory Note generation',
-                                    'Excel Export',
+                                    'Promissiory note generation',
+                                    'Finance Analytics',
                                     'Mobile app access',
                                 ].map((feat) => (
                                     <li
@@ -695,7 +579,7 @@ export default function Welcome() {
                                     </li>
                                 ))}
                             </ul>
-                            <button className="mt-auto w-full cursor-not-allowed  rounded-xl border border-slate-200 py-3 text-sm font-bold text-slate-900 transition-colors hover:bg-slate-50">
+                            <button className="mt-auto w-full cursor-not-allowed rounded-xl border border-slate-200 py-3 text-sm font-bold text-slate-900 transition-colors hover:bg-slate-50">
                                 Coming Soon
                             </button>
                         </div>
@@ -813,17 +697,32 @@ export default function Welcome() {
                         {/* Links: Product */}
                         <div>
                             <h4 className="mb-6 text-xs font-black tracking-widest text-slate-900 uppercase">
-                                Product
+                                Quick Links
                             </h4>
                             <ul className="space-y-4 text-sm font-medium text-slate-500">
                                 <li className="cursor-pointer hover:text-blue-600">
-                                    Features
+                                    <a
+                                        href="/"
+                                        className="transition hover:text-blue-700"
+                                    >
+                                        Home
+                                    </a>
                                 </li>
                                 <li className="cursor-pointer hover:text-blue-600">
-                                    Pricing
+                                    <a
+                                        href="#features"
+                                        className="transition hover:text-blue-700"
+                                    >
+                                        Features
+                                    </a>
                                 </li>
                                 <li className="cursor-pointer hover:text-blue-600">
-                                    Security
+                                    <a
+                                        href="/pricing"
+                                        className="transition hover:text-blue-700"
+                                    >
+                                        Pricing
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -835,19 +734,26 @@ export default function Welcome() {
                             </h4>
                             <ul className="space-y-4 text-sm font-medium text-slate-500">
                                 <li className="cursor-pointer hover:text-blue-600">
-                                    About
+                                    <a
+                                        href="/about-us"
+                                        className="transition hover:text-blue-700"
+                                    >
+                                        About Us
+                                    </a>
                                 </li>
                                 <li className="cursor-pointer hover:text-blue-600">
-                                    Contact
-                                </li>
-                                <li className="cursor-pointer hover:text-blue-600">
-                                    FAQ
+                                    <a
+                                        href="/contact"
+                                        className="transition hover:text-blue-700"
+                                    >
+                                        Contact
+                                    </a>
                                 </li>
                             </ul>
                         </div>
 
                         {/* Links: Legal */}
-                        <div>
+                        {/* <div>
                             <h4 className="mb-6 text-xs font-black tracking-widest text-slate-900 uppercase">
                                 Legal
                             </h4>
@@ -859,7 +765,7 @@ export default function Welcome() {
                                     Terms
                                 </li>
                             </ul>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Bottom Bar */}
