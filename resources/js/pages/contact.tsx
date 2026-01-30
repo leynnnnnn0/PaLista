@@ -5,6 +5,7 @@ import { useState } from 'react';
 import LOGO from '../../images/mainLogo.png';
 import { toast } from 'sonner';
 import Navigation from '../pages/navigation';
+import Footer from '../pages/footer';
 export default function Contact() {
     const [formData, setFormData] = useState({
         name: '',
@@ -388,25 +389,7 @@ export default function Contact() {
             </section>
 
             {/* Footer */}
-            <footer className="border-t border-slate-100 bg-white px-6 pt-16 pb-8">
-                <div className="mx-auto max-w-7xl">
-                    <div className="mb-12 flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                            <img src={LOGO} alt="Logo" className="h-10" />
-                            <span className="font-bold text-[#1e293b]">
-                                MyPautang
-                                <span className="text-blue-600">Log</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="border-t border-slate-100 pt-8 text-center">
-                        <p className="text-sm text-slate-500">
-                            © 2026 MyPautangLog. All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+           <Footer/>
         </div>
     );
 }

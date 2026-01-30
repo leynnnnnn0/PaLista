@@ -1,8 +1,9 @@
 import { login } from '@/routes';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { Check, Crown, Sparkles, X, Zap } from 'lucide-react';
 import LOGO from '../../images/mainLogo.png';
 import Navigation from '../pages/navigation';
+import Footer from '../pages/footer';
 export default function Pricing() {
     const plans = [
         {
@@ -285,8 +286,6 @@ export default function Pricing() {
                                         animationDelay: `${index * 100}ms`,
                                     }}
                                 >
-
-
                                     <div className="mb-6">
                                         {/* <div
                                             className={`mb-4 inline-flex rounded-2xl ${plan.iconBg} p-4`}
@@ -321,8 +320,9 @@ export default function Pricing() {
                                     </div>
 
                                     <button
+                                        onClick={() => router.get('/login')}
                                         disabled={plan.comingSoon}
-                                        className={`mb-8 w-full rounded-xl py-4 text-sm font-black transition-all ${plan.buttonStyle} ${
+                                        className={`cursor-pointer mb-8 w-full rounded-xl py-4 text-sm font-black transition-all ${plan.buttonStyle} ${
                                             plan.comingSoon
                                                 ? 'cursor-not-allowed opacity-50'
                                                 : ''
@@ -527,7 +527,7 @@ export default function Pricing() {
                             Our support team is here to help you choose the
                             right plan
                         </p>
-                        <button className="rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800">
+                        <button onClick={() => router.get('/contact')} className="rounded-xl bg-slate-900 cursor-pointer px-8 py-3 text-sm font-bold text-white transition-all hover:bg-slate-800">
                             Contact Support
                         </button>
                     </div>
@@ -553,33 +553,14 @@ export default function Pricing() {
                         to manage their lending business with confidence.
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-4">
-                        <button className="rounded-xl bg-white px-8 py-4 text-sm font-black text-slate-900 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl">
+                        <button onClick={() => router.get('/login')}  className="rounded-xl bg-white px-8 py-4 text-sm font-black cursor-pointer text-slate-900 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl">
                             Get Started for Free
                         </button>
                     </div>
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="border-t border-slate-100 bg-white px-6 pt-16 pb-8">
-                <div className="mx-auto max-w-7xl">
-                    <div className="mb-12 flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                            <img src={LOGO} alt="Logo" className="h-10" />
-                            <span className="font-bold text-[#1e293b]">
-                                MyPautang
-                                <span className="text-blue-600">Log</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="border-t border-slate-100 pt-8 text-center">
-                        <p className="text-sm text-slate-500">
-                            © 2026 MyPautangLog. All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+           <Footer/>
         </div>
     );
 }

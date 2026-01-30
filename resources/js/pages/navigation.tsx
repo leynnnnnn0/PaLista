@@ -64,7 +64,7 @@ export default function NavigationEnhanced() {
 
                         <Link
                             href={login.url()}
-                            className="rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-blue-800"
+                            className="cursor-pointer rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-blue-800"
                         >
                             Login
                         </Link>

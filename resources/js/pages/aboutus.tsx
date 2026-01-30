@@ -1,8 +1,9 @@
 import { login } from '@/routes';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { Heart, Lightbulb, Shield, Target, Users, Zap } from 'lucide-react';
 import LOGO from '../../images/mainLogo.png';
 import Navigation from '../pages/navigation';
+import Footer from '../pages/footer';
 export default function AboutUs() {
     const values = [
         {
@@ -72,26 +73,10 @@ export default function AboutUs() {
     return (
         <div className="min-h-screen bg-white font-sans">
             {/* Navigation */}
-            <Navigation/>
+            <Navigation />
 
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-blue-900 via-slate-900 to-slate-800 px-6 pt-24 pb-32">
-                {/* Animated Background */}
-                <div className="absolute inset-0 opacity-20">
-                    <div
-                        className="absolute top-0 left-0 h-96 w-96 animate-pulse rounded-full bg-blue-500 blur-3xl"
-                        style={{ animationDuration: '4s' }}
-                    />
-                    <div
-                        className="absolute right-0 bottom-0 h-96 w-96 animate-pulse rounded-full bg-emerald-500 blur-3xl"
-                        style={{ animationDuration: '6s' }}
-                    />
-                    <div
-                        className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-purple-500 blur-3xl"
-                        style={{ animationDuration: '5s' }}
-                    />
-                </div>
-
+            <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 px-6 pt-24 pb-32">
                 <div className="relative mx-auto max-w-4xl text-center">
                     <div className="mb-6 inline-flex items-center space-x-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-4 py-2 backdrop-blur-sm">
                         <span className="text-xs font-bold tracking-wide text-blue-300 uppercase">
@@ -99,7 +84,7 @@ export default function AboutUs() {
                         </span>
                     </div>
 
-                    <h1 className="mb-6 text-5xl leading-tight font-black tracking-tight text-white md:text-6xl lg:text-7xl">
+                    <h1 className="mb-6 text-5xl leading-tight font-black tracking-tight text-black md:text-6xl lg:text-7xl">
                         Empowering Filipino Lenders,
                         <br />
                         <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
@@ -107,7 +92,7 @@ export default function AboutUs() {
                         </span>
                     </h1>
 
-                    <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-300">
+                    <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-black">
                         We're a student-led project on a mission to simplify
                         loan tracking for every Filipino lender. No investors,
                         no complexity—just a genuine solution built by someone
@@ -120,7 +105,7 @@ export default function AboutUs() {
                                 key={index}
                                 className="rounded-2xl border border-white/10 bg-white/5 px-6 py-4 backdrop-blur-sm"
                             >
-                                <div className="text-3xl font-black text-white">
+                                <div className="text-3xl font-black text-black">
                                     {stat.number}
                                 </div>
                                 <div className="text-xs font-semibold text-slate-400 uppercase">
@@ -206,58 +191,6 @@ export default function AboutUs() {
             </section>
 
             {/* Timeline Section */}
-            <section className="bg-slate-50 px-6 py-20">
-                <div className="mx-auto max-w-5xl">
-                    <div className="mb-16 text-center">
-                        <h2 className="mb-4 text-4xl font-black tracking-tight text-slate-900 md:text-5xl">
-                            Our Journey
-                        </h2>
-                        <p className="text-lg text-slate-600">
-                            From student project to trusted platform
-                        </p>
-                    </div>
-
-                    <div className="relative">
-                        {/* Timeline Line */}
-                        <div className="absolute top-0 bottom-0 left-8 w-0.5 bg-gradient-to-b from-blue-600 via-emerald-500 to-purple-600 md:left-1/2" />
-
-                        {timeline.map((item, index) => (
-                            <div
-                                key={index}
-                                className={`relative mb-12 flex items-center ${
-                                    index % 2 === 0
-                                        ? 'md:flex-row'
-                                        : 'md:flex-row-reverse'
-                                }`}
-                            >
-                                {/* Timeline Dot */}
-                                <div className="absolute left-8 z-10 flex h-4 w-4 items-center justify-center md:left-1/2">
-                                    <div className="h-4 w-4 rounded-full border-4 border-white bg-blue-600 shadow-lg" />
-                                </div>
-
-                                {/* Content Card */}
-                                <div
-                                    className={`ml-20 w-full md:ml-0 md:w-5/12 ${index % 2 === 0 ? 'md:mr-auto md:pr-12' : 'md:ml-auto md:pl-12'}`}
-                                >
-                                    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                                        <div className="mb-2 inline-block rounded-full bg-blue-50 px-3 py-1">
-                                            <span className="text-xs font-black text-blue-600 uppercase">
-                                                {item.year}
-                                            </span>
-                                        </div>
-                                        <h3 className="mb-3 text-xl font-black text-slate-900">
-                                            {item.title}
-                                        </h3>
-                                        <p className="text-sm leading-relaxed text-slate-600">
-                                            {item.description}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
 
             {/* Story Section */}
             <section className="px-6 py-20">
@@ -330,7 +263,10 @@ export default function AboutUs() {
                         Start tracking your loans with confidence today.
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-4">
-                        <button className="rounded-xl bg-white px-8 py-4 text-sm font-black text-slate-900 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl">
+                        <button
+                            onClick={() => router.get('/login')}
+                            className="cursor-pointer rounded-xl bg-white px-8 py-4 text-sm font-black text-slate-900 shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl"
+                        >
                             Get Started for Free
                         </button>
                         <Link
@@ -344,25 +280,7 @@ export default function AboutUs() {
             </section>
 
             {/* Footer */}
-            <footer className="border-t border-slate-100 bg-white px-6 pt-16 pb-8">
-                <div className="mx-auto max-w-7xl">
-                    <div className="mb-12 flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                            <img src={LOGO} alt="Logo" className="h-10" />
-                            <span className="font-bold text-[#1e293b]">
-                                MyPautang
-                                <span className="text-blue-600">Log</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="border-t border-slate-100 pt-8 text-center">
-                        <p className="text-sm text-slate-500">
-                            © 2026 MyPautangLog. All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }
