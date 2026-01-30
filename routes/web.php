@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('my-pautang', MyPautangController::class);
     Route::resource('borrowers', BorrowerController::class);
     Route::resource('finance', FinanceController::class);
+    Route::resource('promissory-note', PromissoryNoteController::class);
 
     Route::put('payment-schedules/{id}/penalty', [MyPautangController::class, 'penalty'])->name('payment-schedules.add-penalty');
 

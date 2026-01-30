@@ -9,7 +9,7 @@ import { User, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Edit({ borrower }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, put, processing, errors, reset } = useForm({
         first_name: borrower.first_name,
         last_name: borrower.last_name,
         contact_number: borrower?.contact_number ?? '',
@@ -24,9 +24,9 @@ export default function Edit({ borrower }) {
     });
 
     const handleSubmit = () => {
-        post('/borrowers', {
+        put(`/borrowers/${borrower.id}`, {
             onSuccess: () => {
-                toast.success('Created Successfully.');
+                toast.success('Updated Successfully.');
             },
             onError: (e) => {
                 toast.error('Something went wrong.');
@@ -38,6 +38,16 @@ export default function Edit({ borrower }) {
             <Head title="Add New Borrower" />
 
             <div className="space-y-5 p-6">
+                <div className="flex items-center justify-between space-y-2">
+                    <div>
+                        <h2 className="text-3xl font-bold tracking-tight">
+                            Update Borrower Details
+                        </h2>
+                        <p className="text-muted-foreground">
+                            Please input all the required fields.
+                        </p>
+                    </div>
+                </div>
                 {/* LEFT COLUMN: Borrower Information */}
                 <Card className="border-slate-200 shadow-sm">
                     <CardHeader className="mb-2 flex flex-row items-center gap-2 border-b pb-3 sm:mb-4 sm:pb-4">

@@ -4,11 +4,37 @@ namespace App\Http\Controllers;
 
 use App\Models\Loan;
 use App\Models\Borrower;
+use App\Models\PromissoryNote;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class PromissoryNoteController extends Controller
 {
+    public function index()
+    {
+        $promissoryNote = PromissoryNote::firstOrCreate(['id' => Auth::id()],[]);
+
+
+        return Inertia::render('PromissoryNote/Index',[
+            'promissoryNote' => $promissoryNote
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'lender' => ['required'],
+            'penalty_percentage' => ['required', 'numeric']
+        ]);
+
+        $promissoryNote = PromissoryNote::findOrFail($id);
+
+        $promissoryNote->update($validated);
+
+        return back();
+    }
     /**
      * Generate and download promissory note for a loan
      */
@@ -27,6 +53,8 @@ class PromissoryNoteController extends Controller
             : 0;
 
         // Prepare data for the view
+
+        $promissoryNote = PromissoryNote::firstOrCreate(['id' => Auth::id()], []);
         $data = [
             'loan' => (object) [
                 'loan_number' => $loan->loan_number ?? $this->generateLoanNumber($loan->id),
@@ -43,7 +71,7 @@ class PromissoryNoteController extends Controller
                 'maturity_date' => $loan->payment_schedules[$loan->payment_schedules->count() - 1]['due_date'],
                 'payment_schedules' => $loan->payment_schedules,
                 'payment_amount' => $paymentAmount,
-                'penalty_rate' => 2, // Default penalty rate
+                'penalty_rate' => $promissoryNote->penalty_percentage, // Default penalty rate
                 'penalty_period' => $this->getPenaltyPeriod($loan->payment_frequency),
             ],
             'borrower' => (object) [
@@ -52,7 +80,7 @@ class PromissoryNoteController extends Controller
                 'address' => $this->getFullAddress($borrower),
             ],
             'lender' => (object) [
-                'business_name' => config('app.business_name', 'Your Business Name'),
+                'business_name' => $promissoryNote->lender,
             ],
         ];
 

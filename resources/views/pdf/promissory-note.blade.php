@@ -23,7 +23,7 @@
             color: #000;
             max-width: 210mm;
             margin: 0 auto;
-            padding: 20mm;
+            padding: 10mm;
         }
 
         .header {
@@ -300,7 +300,7 @@
         <div class="signature-block">
             <div class="signature-label">Lender's Signature:</div>
             <div class="signature-line"></div>
-            <div class="signature-label">Printer Name:</div>
+            <div class="signature-label">Printed Name:</div>
             <div>{{ strtoupper($lender->business_name) }}</div>
         </div>
     </div>

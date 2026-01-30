@@ -50,4 +50,9 @@ class User extends Authenticatable implements Auditable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    public function promissory_note()
+    {
+        return $this->hasOne(PromissoryNote::class);
+    }
 }

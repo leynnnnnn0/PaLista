@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('borrower_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 15, 2);
             $table->string('interest_type');
-            $table->decimal('interest_value', 5, 2)->default(0);
+            $table->decimal('interest_value', 15, 2)->default(0);
             $table->string('interest_period');
             $table->integer('loan_duration');
             $table->string('duration_unit');

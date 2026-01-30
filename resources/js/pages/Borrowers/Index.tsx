@@ -121,66 +121,77 @@ export default function BorrowersIndex({borrowers}: PageProps) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {borrowers.data.map((person) => (
-                            <TableRow
-                                key={person.id}
-                                className="group transition-colors hover:bg-slate-50/50"
-                            >
-                                <TableCell>{person.full_name}</TableCell>
-                                <TableCell className="hidden md:table-cell">
-                                    {person.contact_number ?? 'N/A'}
-                                </TableCell>
-                                <TableCell className="hidden md:table-cell">
-                                    {person.email ?? 'N/A'}
-                                </TableCell>
-                                <TableCell className="hidden lg:table-cell">
-                                    <div className="flex items-center gap-2 font-medium text-slate-600">
-                                        <History
-                                            size={14}
-                                            className="text-slate-400"
-                                        />
-                                        {person.total_loans}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="hidden lg:table-cell">
-                                    <div className="flex items-center gap-2 font-medium text-slate-600">
-                                        <History
-                                            size={14}
-                                            className="text-slate-400"
-                                        />
-                                        {person.completed_loans}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex items-center justify-end gap-3">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 cursor-pointer"
-                                            onClick={() =>
-                                                router.get(
-                                                    `/borrowers/${person.id}`,
-                                                )
-                                            }
-                                        >
-                                            <Eye className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 cursor-pointer"
-                                            onClick={() =>
-                                                router.get(
-                                                    `/borrowers/${person.id}/edit`,
-                                                )
-                                            }
-                                        >
-                                            <Pencil className="h-4 w-4" />
-                                        </Button>
-                                    </div>
+                        {borrowers.data.length === 0 ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={6}
+                                    className="h-24 text-center"
+                                >
+                                    No borrowers found.
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            borrowers.data.map((person) => (
+                                <TableRow
+                                    key={person.id}
+                                    className="group transition-colors hover:bg-slate-50/50"
+                                >
+                                    <TableCell>{person.full_name}</TableCell>
+                                    <TableCell className="hidden md:table-cell">
+                                        {person.contact_number ?? 'N/A'}
+                                    </TableCell>
+                                    <TableCell className="hidden md:table-cell">
+                                        {person.email ?? 'N/A'}
+                                    </TableCell>
+                                    <TableCell className="hidden lg:table-cell">
+                                        <div className="flex items-center gap-2 font-medium text-slate-600">
+                                            <History
+                                                size={14}
+                                                className="text-slate-400"
+                                            />
+                                            {person.total_loans}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="hidden lg:table-cell">
+                                        <div className="flex items-center gap-2 font-medium text-slate-600">
+                                            <History
+                                                size={14}
+                                                className="text-slate-400"
+                                            />
+                                            {person.completed_loans}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex items-center justify-end gap-3">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 cursor-pointer"
+                                                onClick={() =>
+                                                    router.get(
+                                                        `/borrowers/${person.id}`,
+                                                    )
+                                                }
+                                            >
+                                                <Eye className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 cursor-pointer"
+                                                onClick={() =>
+                                                    router.get(
+                                                        `/borrowers/${person.id}/edit`,
+                                                    )
+                                                }
+                                            >
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </div>

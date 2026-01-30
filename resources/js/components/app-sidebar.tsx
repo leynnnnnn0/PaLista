@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, ChartArea, Folder, LayoutGrid, Notebook, Users } from 'lucide-react';
+import { BookOpen, ChartArea, Folder, LayoutGrid, List, Newspaper, Notebook, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -23,10 +23,11 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'My Pautang',
+        title: 'My Pautangs',
         href: '/my-pautang',
         icon: Notebook,
-    },{
+    },
+    {
         title: 'Borrowers',
         href: '/borrowers',
         icon: Users,
@@ -35,7 +36,12 @@ const mainNavItems: NavItem[] = [
         title: 'Finance',
         href: '/finance',
         icon: ChartArea,
-    }
+    },
+    {
+        title: 'Promissory Note',
+        href: '/promissory-note',
+        icon: Newspaper,
+    },
 ];
 
 const footerNavItems: NavItem[] = [

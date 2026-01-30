@@ -47,6 +47,16 @@ export default function Create()
             <Head title="Add New Borrower" />
 
             <div className="p-6 space-y-5">
+                  <div className="flex items-center justify-between space-y-2">
+                    <div>
+                        <h2 className="text-3xl font-bold tracking-tight">
+                            Create New Borrower
+                        </h2>
+                        <p className="text-muted-foreground">
+                            Please input all the required fields.
+                        </p>
+                    </div>
+                    </div>
                 {/* LEFT COLUMN: Borrower Information */}
                 <Card className="border-slate-200 shadow-sm">
                     <CardHeader className="mb-2 flex flex-row items-center gap-2 border-b pb-3 sm:mb-4 sm:pb-4">

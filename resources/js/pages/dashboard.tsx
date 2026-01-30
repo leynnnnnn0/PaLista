@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -6,105 +7,64 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import {
     AlertCircle,
-    ArrowRight,
+    Calendar,
     CheckCircle,
+    ChevronLeft,
+    ChevronRight,
     Clock,
-    MoreHorizontal,
-    TrendingUp,
-    Wallet,
+    Filter,
+    Users,
 } from 'lucide-react';
-import {
-    Area,
-    AreaChart,
-    CartesianGrid,
-    Cell,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from 'recharts';
+import { useMemo, useState } from 'react';
 
-export default function Dashboard() {
-    // --- Data ---
-    const stats = {
-        activeLoans: 12,
-        totalLent: 285000,
-        totalCollected: 165000,
-        outstanding: 120000,
-        overdueLoans: 3,
-        clientsCount: 8,
-        expectedProfit: 24500,
-        collectedProfit: 12300,
+interface DashboardProps {
+    stats: {
+        totalBorrowers: number;
+        activeAccounts: number;
+        totalPayables: number;
+        overdueLoans: number;
     };
+    paymentSchedules: Array<{
+        id: number;
+        borrower_name: string;
+        loan_id: number;
+        due_date: string;
+        amount_due: number;
+        total_due: number;
+        paid_amount: number;
+        remaining_amount: number;
+        status: string;
+        penalty_amount: number;
+        rebate_amount: number;
+    }>;
+    calendarData: Array<{
+        date: string;
+        count: number;
+        total_amount: number;
+    }>;
+    filters: {
+        date_from: string;
+        date_to: string;
+    };
+}
 
-    const recentLoans = [
-        {
-            id: 1,
-            client: 'Maria Santos',
-            amount: 15000,
-            dueDate: '2026-01-28',
-            status: 'active',
-            paid: 5000,
-        },
-        {
-            id: 2,
-            client: 'Juan Dela Cruz',
-            amount: 25000,
-            dueDate: '2026-01-26',
-            status: 'overdue',
-            paid: 10000,
-        },
-        {
-            id: 3,
-            client: 'Rosa Garcia',
-            amount: 10000,
-            dueDate: '2026-02-05',
-            status: 'active',
-            paid: 3000,
-        },
-        {
-            id: 4,
-            client: 'Pedro Reyes',
-            amount: 20000,
-            dueDate: '2026-01-30',
-            status: 'active',
-            paid: 8000,
-        },
-        {
-            id: 5,
-            client: 'Ana Lopez',
-            amount: 12000,
-            dueDate: '2026-01-24',
-            status: 'overdue',
-            paid: 2000,
-        },
-    ];
+export default function Dashboard({
+    stats,
+    paymentSchedules,
+    calendarData,
+    filters,
+}: DashboardProps) {
+    const [dateFrom, setDateFrom] = useState(filters.date_from);
+    const [dateTo, setDateTo] = useState(filters.date_to);
+    const [currentMonth, setCurrentMonth] = useState(new Date());
 
-    const monthlyData = [
-        { month: 'Aug', lent: 45000, collected: 28000 },
-        { month: 'Sep', lent: 52000, collected: 35000 },
-        { month: 'Oct', lent: 48000, collected: 42000 },
-        { month: 'Nov', lent: 58000, collected: 38000 },
-        { month: 'Dec', lent: 42000, collected: 32000 },
-        { month: 'Jan', lent: 40000, collected: 30000 },
-    ];
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
-    const paymentStatusData = [
-        { name: 'Collected', value: stats.totalCollected, color: '#10b981' },
-        {
-            name: 'Pending',
-            value: stats.outstanding - stats.overdueLoans * 5000,
-            color: '#3b82f6',
-        },
-        { name: 'Overdue', value: stats.overdueLoans * 5000, color: '#ef4444' },
-    ];
-
-    // --- Helpers ---
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-PH', {
             style: 'currency',
@@ -113,10 +73,92 @@ export default function Dashboard() {
         }).format(amount);
     };
 
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        });
+    };
+
+    const handleFilterSubmit = () => {
+        setCurrentPage(1); // Reset to first page when filtering
+        router.get(
+            '/dashboard',
+            {
+                date_from: dateFrom,
+                date_to: dateTo,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        );
+    };
+
+    const handleResetFilters = () => {
+        const today = new Date().toISOString().split('T')[0];
+        setDateFrom(today);
+        setDateTo(today);
+        setCurrentPage(1); // Reset to first page
+        router.get(
+            '/dashboard',
+            {
+                date_from: today,
+                date_to: today,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        );
+    };
+
+    // Pagination logic
+    const totalPages = Math.ceil(paymentSchedules.length / itemsPerPage);
+    const paginatedSchedules = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return paymentSchedules.slice(startIndex, endIndex);
+    }, [paymentSchedules, currentPage]);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    // Calendar helpers
+    const getDaysInMonth = (date: Date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDayOfWeek = firstDay.getDay();
+        return { daysInMonth, startingDayOfWeek, year, month };
+    };
+
+    const getCalendarDataForDate = (date: string) => {
+        return calendarData.find((item) => item.date === date);
+    };
+
+    const { daysInMonth, startingDayOfWeek, year, month } =
+        getDaysInMonth(currentMonth);
+
+    const nextMonth = () => {
+        setCurrentMonth(
+            new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1),
+        );
+    };
+
+    const prevMonth = () => {
+        setCurrentMonth(
+            new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1),
+        );
+    };
+
     return (
         <AppLayout>
             <Head title="Dashboard" />
-
             <div className="min-h-screen space-y-8 bg-slate-50/50 p-6 lg:p-10">
                 {/* Header */}
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -125,44 +167,82 @@ export default function Dashboard() {
                             Portfolio Overview
                         </h1>
                         <p className="font-medium text-slate-500">
-                            Monitoring {stats.activeLoans} active loans across{' '}
-                            {stats.clientsCount} clients.
+                            Monitoring {stats.activeAccounts} active loans
+                            across {stats.totalBorrowers} borrowers.
                         </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <button className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
-                            Export PDF
-                        </button>
-                    </div>
                 </div>
+
+                {/* Date Filter */}
+                <Card className="border-slate-200 bg-slate-50 shadow-none">
+                    <CardContent className="p-4">
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-slate-500" />
+                                <span className="text-sm font-medium text-slate-700">
+                                    Filter Period:
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="date"
+                                    value={dateFrom}
+                                    onChange={(e) =>
+                                        setDateFrom(e.target.value)
+                                    }
+                                    className="rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                />
+                                <span className="text-sm text-slate-500">
+                                    to
+                                </span>
+                                <input
+                                    type="date"
+                                    value={dateTo}
+                                    onChange={(e) => setDateTo(e.target.value)}
+                                    className="rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                />
+                            </div>
+                            <Button
+                                size="sm"
+                                className="bg-emerald-600 shadow-none hover:bg-emerald-700"
+                                onClick={handleFilterSubmit}
+                            >
+                                <Filter className="mr-2 h-3 w-3" />
+                                Apply
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="shadow-none"
+                                onClick={handleResetFilters}
+                            >
+                                Reset
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
 
                 {/* Stat Grid */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <StatCard
-                        title="Total Lent"
-                        value={formatCurrency(stats.totalLent)}
-                        icon={<Wallet className="text-blue-600" size={20} />}
-                        trend="+12.5%"
-                        trendUp
+                        title="Borrowers"
+                        value={stats.totalBorrowers.toString()}
+                        icon={<Users className="text-blue-600" size={20} />}
                     />
                     <StatCard
-                        title="Total Collected"
-                        value={formatCurrency(stats.totalCollected)}
+                        title="Active Accounts"
+                        value={stats.activeAccounts.toString()}
                         icon={
                             <CheckCircle
                                 className="text-emerald-600"
                                 size={20}
                             />
                         }
-                        trend="+15.2%"
-                        trendUp
                     />
                     <StatCard
-                        title="Awaiting Payment"
-                        value={formatCurrency(stats.outstanding)}
+                        title="Total Payables"
+                        value={formatCurrency(stats.totalPayables)}
                         icon={<Clock className="text-orange-500" size={20} />}
-                        trend="-2.4%"
-                        trendUp={false}
                     />
                     <StatCard
                         title="Overdue Loans"
@@ -170,249 +250,211 @@ export default function Dashboard() {
                         icon={
                             <AlertCircle className="text-red-500" size={20} />
                         }
-                        trend="Requires Action"
-                        trendUp={false}
-                        isAlert
+                        isAlert={stats.overdueLoans > 0}
                     />
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    {/* Main Chart */}
+                <div className="grid grid-cols-1 ">
+                    {/* Payment Schedules Table */}
                     <Card className="border-none shadow-sm ring-1 ring-slate-200 lg:col-span-2">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                            <div>
-                                <CardTitle className="text-lg font-bold">
-                                    Lending vs Collections
-                                </CardTitle>
-                                <CardDescription>
-                                    Performance trends for the last 6 months
-                                </CardDescription>
-                            </div>
-                            <TrendingUp className="text-slate-300" />
-                        </CardHeader>
-                        <CardContent className="pt-4">
-                            <div className="h-[300px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={monthlyData}>
-                                        <defs>
-                                            <linearGradient
-                                                id="colorLent"
-                                                x1="0"
-                                                y1="0"
-                                                x2="0"
-                                                y2="1"
-                                            >
-                                                <stop
-                                                    offset="5%"
-                                                    stopColor="#3b82f6"
-                                                    stopOpacity={0.1}
-                                                />
-                                                <stop
-                                                    offset="95%"
-                                                    stopColor="#3b82f6"
-                                                    stopOpacity={0}
-                                                />
-                                            </linearGradient>
-                                        </defs>
-                                        <CartesianGrid
-                                            strokeDasharray="3 3"
-                                            vertical={false}
-                                            stroke="#f1f5f9"
-                                        />
-                                        <XAxis
-                                            dataKey="month"
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{
-                                                fill: '#94a3b8',
-                                                fontSize: 12,
-                                            }}
-                                            dy={10}
-                                        />
-                                        <YAxis
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{
-                                                fill: '#94a3b8',
-                                                fontSize: 12,
-                                            }}
-                                        />
-                                        <Tooltip content={<CustomTooltip />} />
-                                        <Area
-                                            type="monotone"
-                                            dataKey="lent"
-                                            stroke="#3b82f6"
-                                            strokeWidth={2}
-                                            fillOpacity={1}
-                                            fill="url(#colorLent)"
-                                        />
-                                        <Area
-                                            type="monotone"
-                                            dataKey="collected"
-                                            stroke="#10b981"
-                                            strokeWidth={2}
-                                            fill="transparent"
-                                        />
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Status Distribution */}
-                    <Card className="border-none shadow-sm ring-1 ring-slate-200">
                         <CardHeader>
                             <CardTitle className="text-lg font-bold">
-                                Loan Distribution
+                                Payment Schedules
                             </CardTitle>
                             <CardDescription>
-                                By collection status
+                                Scheduled payments for the selected period
+                                {paymentSchedules.length > 0 && (
+                                    <span className="ml-2 text-slate-600">
+                                        ({paymentSchedules.length} total)
+                                    </span>
+                                )}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="h-[240px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <PieChart>
-                                        <Pie
-                                            data={paymentStatusData}
-                                            innerRadius={60}
-                                            outerRadius={80}
-                                            paddingAngle={5}
-                                            dataKey="value"
-                                        >
-                                            {paymentStatusData.map(
-                                                (entry, index) => (
-                                                    <Cell
-                                                        key={`cell-${index}`}
-                                                        fill={entry.color}
-                                                    />
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead className="border-b border-slate-200 bg-slate-50">
+                                        <tr>
+                                            <th className="px-4 py-3 text-left font-semibold text-slate-600">
+                                                Borrower
+                                            </th>
+                                            <th className="px-4 py-3 text-left font-semibold text-slate-600">
+                                                Due Date
+                                            </th>
+                                            <th className="px-4 py-3 text-right font-semibold text-slate-600">
+                                                Amount Due
+                                            </th>
+                                            <th className="px-4 py-3 text-right font-semibold text-slate-600">
+                                                Paid
+                                            </th>
+                                            <th className="px-4 py-3 text-right font-semibold text-slate-600">
+                                                Remaining
+                                            </th>
+                                            <th className="px-4 py-3 text-center font-semibold text-slate-600">
+                                                Status
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {paginatedSchedules.length === 0 ? (
+                                            <tr>
+                                                <td
+                                                    colSpan={6}
+                                                    className="px-4 py-8 text-center text-slate-500"
+                                                >
+                                                    No payment schedules found
+                                                    for this period
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            paginatedSchedules.map(
+                                                (schedule) => (
+                                                    <tr
+                                                        key={schedule.id}
+                                                        className="hover:bg-slate-50"
+                                                    >
+                                                        <td className="px-4 py-3 font-medium text-slate-900">
+                                                            {
+                                                                schedule.borrower_name
+                                                            }
+                                                        </td>
+                                                        <td className="px-4 py-3 text-slate-600">
+                                                            {formatDate(
+                                                                schedule.due_date,
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right font-medium text-slate-900">
+                                                            {formatCurrency(
+                                                                schedule.total_due,
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right font-medium text-emerald-600">
+                                                            {formatCurrency(
+                                                                schedule.paid_amount,
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-right font-medium text-orange-600">
+                                                            {formatCurrency(
+                                                                schedule.remaining_amount,
+                                                            )}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-center">
+                                                            <span
+                                                                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                                                    schedule.status ===
+                                                                    'paid'
+                                                                        ? 'bg-emerald-50 text-emerald-700'
+                                                                        : schedule.status ===
+                                                                            'overdue'
+                                                                          ? 'bg-red-50 text-red-700'
+                                                                          : 'bg-blue-50 text-blue-700'
+                                                                }`}
+                                                            >
+                                                                {schedule.status.toUpperCase()}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
                                                 ),
+                                            )
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Pagination Controls */}
+                            {paymentSchedules.length > itemsPerPage && (
+                                <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
+                                    <div className="text-sm text-slate-600">
+                                        Showing{' '}
+                                        <span className="font-medium">
+                                            {(currentPage - 1) * itemsPerPage +
+                                                1}
+                                        </span>{' '}
+                                        to{' '}
+                                        <span className="font-medium">
+                                            {Math.min(
+                                                currentPage * itemsPerPage,
+                                                paymentSchedules.length,
                                             )}
-                                        </Pie>
-                                        <Tooltip content={<CustomTooltip />} />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </div>
-                            <div className="mt-4 space-y-2">
-                                {paymentStatusData.map((item) => (
-                                    <div
-                                        key={item.name}
-                                        className="flex items-center justify-between text-sm"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <div
-                                                className="h-2 w-2 rounded-full"
-                                                style={{
-                                                    backgroundColor: item.color,
-                                                }}
-                                            />
-                                            <span className="text-slate-600">
-                                                {item.name}
-                                            </span>
-                                        </div>
-                                        <span className="font-semibold text-slate-900">
-                                            {formatCurrency(item.value)}
-                                        </span>
+                                        </span>{' '}
+                                        of{' '}
+                                        <span className="font-medium">
+                                            {paymentSchedules.length}
+                                        </span>{' '}
+                                        results
                                     </div>
-                                ))}
-                            </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() =>
+                                                handlePageChange(
+                                                    currentPage - 1,
+                                                )
+                                            }
+                                            disabled={currentPage === 1}
+                                            className="shadow-none"
+                                        >
+                                            <ChevronLeft className="h-4 w-4" />
+                                            Previous
+                                        </Button>
+                                        <div className="flex items-center gap-1">
+                                            {Array.from(
+                                                { length: totalPages },
+                                                (_, i) => i + 1,
+                                            ).map((page) => (
+                                                <Button
+                                                    key={page}
+                                                    size="sm"
+                                                    variant={
+                                                        currentPage === page
+                                                            ? 'default'
+                                                            : 'outline'
+                                                    }
+                                                    onClick={() =>
+                                                        handlePageChange(page)
+                                                    }
+                                                    className={`shadow-none ${
+                                                        currentPage === page
+                                                            ? 'bg-emerald-600 hover:bg-emerald-700'
+                                                            : ''
+                                                    }`}
+                                                >
+                                                    {page}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() =>
+                                                handlePageChange(
+                                                    currentPage + 1,
+                                                )
+                                            }
+                                            disabled={
+                                                currentPage === totalPages
+                                            }
+                                            className="shadow-none"
+                                        >
+                                            Next
+                                            <ChevronRight className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
-                </div>
 
-                {/* Table Section */}
-                <Card className="overflow-hidden border-none shadow-sm ring-1 ring-slate-200">
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <div>
-                            <CardTitle className="text-lg font-bold">
-                                Recent Loan Activities
-                            </CardTitle>
-                            <CardDescription>
-                                A list of recent disbursements and their current
-                                status.
-                            </CardDescription>
-                        </div>
-                        <button className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:underline">
-                            View All <ArrowRight size={14} />
-                        </button>
-                    </CardHeader>
-                    <div className="overflow-x-auto">
-                        <table className="w-full border-collapse text-left text-sm">
-                            <thead>
-                                <tr className="border-y border-slate-100 bg-slate-50">
-                                    <th className="px-6 py-3 font-semibold text-slate-600">
-                                        Client
-                                    </th>
-                                    <th className="px-6 py-3 font-semibold text-slate-600">
-                                        Amount
-                                    </th>
-                                    <th className="px-6 py-3 font-semibold text-slate-600">
-                                        Paid
-                                    </th>
-                                    <th className="px-6 py-3 font-semibold text-slate-600">
-                                        Due Date
-                                    </th>
-                                    <th className="px-6 py-3 font-semibold text-slate-600">
-                                        Status
-                                    </th>
-                                    <th className="px-6 py-3"></th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {recentLoans.map((loan) => (
-                                    <tr
-                                        key={loan.id}
-                                        className="transition-colors hover:bg-slate-50/50"
-                                    >
-                                        <td className="px-6 py-4 font-medium text-slate-900">
-                                            {loan.client}
-                                        </td>
-                                        <td className="px-6 py-4 text-slate-600">
-                                            {formatCurrency(loan.amount)}
-                                        </td>
-                                        <td className="px-6 py-4 text-slate-600">
-                                            {formatCurrency(loan.paid)}
-                                        </td>
-                                        <td className="px-6 py-4 text-slate-500">
-                                            {loan.dueDate}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span
-                                                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                                                    loan.status === 'overdue'
-                                                        ? 'bg-red-50 text-red-700'
-                                                        : 'bg-emerald-50 text-emerald-700'
-                                                }`}
-                                            >
-                                                {loan.status.toUpperCase()}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button className="text-slate-400 hover:text-slate-600">
-                                                <MoreHorizontal size={18} />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </Card>
+
+                </div>
             </div>
         </AppLayout>
     );
 }
 
 // --- Sub-components ---
-
-function StatCard({
-    title,
-    value,
-    icon,
-    trend,
-    trendUp,
-    isAlert = false,
-}: any) {
+function StatCard({ title, value, icon, isAlert = false }: any) {
     return (
         <Card className="border-none shadow-sm ring-1 ring-slate-200">
             <CardContent className="p-6">
@@ -420,17 +462,11 @@ function StatCard({
                     <div className="rounded-xl bg-slate-50 p-2.5 shadow-sm ring-1 ring-slate-100">
                         {icon}
                     </div>
-                    <span
-                        className={`rounded-md px-2 py-1 text-[10px] font-bold tracking-wider uppercase ${
-                            isAlert
-                                ? 'bg-red-100 text-red-700'
-                                : trendUp
-                                  ? 'bg-emerald-50 text-emerald-700'
-                                  : 'bg-slate-100 text-slate-600'
-                        }`}
-                    >
-                        {trend}
-                    </span>
+                    {isAlert && (
+                        <span className="rounded-md bg-red-100 px-2 py-1 text-[10px] font-bold tracking-wider text-red-700 uppercase">
+                            ALERT
+                        </span>
+                    )}
                 </div>
                 <div>
                     <p className="text-xs font-semibold tracking-widest text-slate-500 uppercase">
@@ -444,34 +480,3 @@ function StatCard({
         </Card>
     );
 }
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-xl ring-1 ring-black/5">
-                <p className="mb-2 text-[10px] font-bold tracking-tight text-slate-400 uppercase">
-                    {label}
-                </p>
-                {payload.map((entry: any, index: number) => (
-                    <div
-                        key={index}
-                        className="flex items-center gap-2 text-sm font-bold"
-                        style={{ color: entry.color }}
-                    >
-                        <div
-                            className="h-1.5 w-1.5 rounded-full"
-                            style={{ backgroundColor: entry.color }}
-                        />
-                        {entry.name}:{' '}
-                        {new Intl.NumberFormat('en-PH', {
-                            style: 'currency',
-                            currency: 'PHP',
-                            minimumFractionDigits: 0,
-                        }).format(entry.value)}
-                    </div>
-                ))}
-            </div>
-        );
-    }
-    return null;
-};
