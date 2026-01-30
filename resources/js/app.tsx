@@ -6,7 +6,7 @@ import '../css/app.css';
 import { initializeTheme } from './hooks/use-appearance';
 import { Toaster } from '@/components/ui/sonner';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = 'MyPautangLog';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
@@ -21,6 +21,7 @@ createInertiaApp({
         root.render(
             <StrictMode>
                 <Toaster position="top-right" />
+
                 <App {...props} />
             </StrictMode>,
         );

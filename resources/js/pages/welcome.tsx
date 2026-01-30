@@ -38,7 +38,7 @@ export default function Welcome() {
     ];
 
     // SEO metadata
-    const siteUrl = 'https://mypautanglog.com'; // Replace with your actual domain
+    const siteUrl = 'https://mypautanglog.online'; // Replace with your actual domain
     const pageTitle =
         'MyPautangLog - Digital Loan Tracking for Filipino Lenders';
     const pageDescription =
