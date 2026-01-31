@@ -36,6 +36,8 @@ import {
     User,
     Ban,
     AlertCircle,
+    Code,
+    QrCode,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -398,7 +400,7 @@ export default function Show({ loan }: PageProps) {
                             </div>
                         </div>
 
-                        {loan.is_voided && (
+                        {loan.is_voided ? (
                             <Alert variant="destructive" className="py-3">
                                 <AlertCircle className="h-4 w-4" />
                                 <AlertDescription className="ml-2">
@@ -413,6 +415,8 @@ export default function Show({ loan }: PageProps) {
                                         ` - ${loan.void_reason}`}
                                 </AlertDescription>
                             </Alert>
+                        ) : (
+                            ''
                         )}
 
                         <div className="grid gap-6 md:grid-cols-2">
@@ -438,7 +442,7 @@ export default function Show({ loan }: PageProps) {
                                             Address
                                         </p>
                                         <p className="font-medium">
-                                            {loan.borrower?.address}
+                                            {loan.borrower?.address ?? 'N/A'}
                                         </p>
                                     </div>
                                     <div>
@@ -446,7 +450,8 @@ export default function Show({ loan }: PageProps) {
                                             Phone Number
                                         </p>
                                         <p className="font-medium">
-                                            {loan.borrower?.contact_number}
+                                            {loan.borrower?.contact_number ??
+                                                'N/A'}
                                         </p>
                                     </div>
                                 </CardContent>
@@ -461,6 +466,15 @@ export default function Show({ loan }: PageProps) {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-3">
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-muted-foreground">
+                                            Loan Number
+                                        </span>
+                                        <span className="flex items-center gap-1 font-medium">
+                                            <QrCode className="h-4 w-4" />
+                                            {loan.loan_number}
+                                        </span>
+                                    </div>
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">
                                             Transaction Date
@@ -501,6 +515,14 @@ export default function Show({ loan }: PageProps) {
                                         </span>
                                         <span className="font-medium">
                                             {loan.duration}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-sm text-muted-foreground">
+                                            Payment Frequency
+                                        </span>
+                                        <span className="font-medium">
+                                            {loan.payment_frequency}
                                         </span>
                                     </div>
                                 </CardContent>
@@ -817,7 +839,7 @@ export default function Show({ loan }: PageProps) {
                                                         <Button
                                                             key={schedule.id}
                                                             variant="outline"
-                                                            className="h-auto w-full justify-between py-3"
+                                                            className="h-auto w-full cursor-pointer justify-between py-3"
                                                             onClick={() =>
                                                                 handleOpenPaymentModal(
                                                                     schedule,

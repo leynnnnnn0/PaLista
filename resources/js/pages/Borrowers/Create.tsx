@@ -14,6 +14,13 @@ import { User, Users } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { BreadcrumbItem } from "@/types";
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Borrowers',
+        href: '/borrowers/create',
+    },
+];
 
 export default function Create()
 {
@@ -43,7 +50,7 @@ export default function Create()
         })
     }
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Add New Borrower" />
 
             <div className="p-6 space-y-5">

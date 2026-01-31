@@ -39,6 +39,14 @@ import {
 import { toast } from 'sonner';
 
 import axios from 'axios';
+import { BreadcrumbItem } from '@/types';
+
+const breadcrumbs:  BreadcrumbItem[] = [
+    {
+        title: 'Loans',
+        href: '/my-pautang',
+    },
+];
 
 export default function Create() {
     const [payments, setPayments] = useState([{ date: '', amount: '' }]);
@@ -276,7 +284,9 @@ export default function Create() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const validSchedule = payments.every((p) => p.date && p.amount);
+        const validSchedule = payments.every((p) => 
+            p.date && p.amount
+        );
         if (!validSchedule) {
             toast.error(
                 'Please fill in all payment schedule dates and amounts',
@@ -407,7 +417,7 @@ export default function Create() {
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Borrower & Loan Registration" />
 
             <div className="min-h-screen space-y-4 bg-slate-50/30 p-4 sm:p-6 md:p-8">
@@ -674,9 +684,9 @@ export default function Create() {
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div className="space-y-2">
                                 <Label className="text-sm font-bold">
-                                    First Payment Date 
+                                    First Payment Date
                                 </Label>
-                                <Input 
+                                <Input
                                     type="date"
                                     value={firstPaymentDate}
                                     onChange={(e) =>
@@ -687,7 +697,7 @@ export default function Create() {
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-sm font-bold">
-                                    Payment Frequency 
+                                    Payment Frequency
                                 </Label>
                                 <Select
                                     value={data.payment_frequency}
@@ -1009,7 +1019,10 @@ export default function Create() {
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                                 <div className="space-y-2">
                                     <Label className="text-sm">
-                                        First Name *
+                                        First Name{' '}
+                                        <span className="text-xs text-red-500">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         placeholder="Juan"
@@ -1031,7 +1044,10 @@ export default function Create() {
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-sm">
-                                        Last Name *
+                                        Last Name{' '}
+                                        <span className="text-xs text-red-500">
+                                            *
+                                        </span>
                                     </Label>
                                     <Input
                                         placeholder="Dela Cruz"
@@ -1169,7 +1185,7 @@ export default function Create() {
                                 <div className="space-y-2">
                                     <Label className="text-sm">Country *</Label>
                                     <Input
-                                         disabled={isExistingBorrower}
+                                        disabled={isExistingBorrower}
                                         className="bg-slate-50 text-sm"
                                         value={data.country}
                                     />

@@ -23,8 +23,14 @@ import {
 } from '@/components/ui/table';
 // Icons
 import Pagination from '@/components/pagination';
-import { Loan, Paginated } from '@/types';
+import { BreadcrumbItem, Loan, Paginated } from '@/types';
 import { Eye, Filter, Plus, Search } from 'lucide-react';
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Loans',
+        href: '/my-pautang',
+    },
+];
 
 interface PageProps {
     loans: Paginated<Loan>;
@@ -121,7 +127,7 @@ export default function Index({ loans, filters }: PageProps) {
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="My Pautangs" />
             <div className="flex-1 space-y-8 p-8 pt-6">
                 {/* Page Header */}

@@ -7,6 +7,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import {
     AlertCircle,
@@ -16,10 +17,16 @@ import {
     ChevronRight,
     Clock,
     Filter,
+    Plus,
     Users,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+    },
+];
 interface DashboardProps {
     stats: {
         totalBorrowers: number;
@@ -157,7 +164,7 @@ export default function Dashboard({
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="min-h-screen space-y-8 bg-slate-50/50 p-6 lg:p-10">
                 {/* Header */}
@@ -171,26 +178,35 @@ export default function Dashboard({
                             across {stats.totalBorrowers} borrowers.
                         </p>
                     </div>
+                    <Button
+                        className="mt-2 w-full cursor-pointer md:mt-0 md:w-auto"
+                        size="sm"
+                        onClick={() => router.get('/my-pautang/create')}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        New Loan
+                    </Button>
                 </div>
 
                 {/* Date Filter */}
                 <Card className="border-slate-200 bg-slate-50 shadow-none">
                     <CardContent className="p-4">
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                             <div className="flex items-center gap-2">
                                 <Calendar className="h-4 w-4 text-slate-500" />
                                 <span className="text-sm font-medium text-slate-700">
                                     Filter Period:
                                 </span>
                             </div>
-                            <div className="flex items-center gap-2">
+
+                            <div className="flex min-w-0 flex-wrap items-center gap-2">
                                 <input
                                     type="date"
                                     value={dateFrom}
                                     onChange={(e) =>
                                         setDateFrom(e.target.value)
                                     }
-                                    className="rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                    className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none sm:w-auto"
                                 />
                                 <span className="text-sm text-slate-500">
                                     to
@@ -199,25 +215,28 @@ export default function Dashboard({
                                     type="date"
                                     value={dateTo}
                                     onChange={(e) => setDateTo(e.target.value)}
-                                    className="rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                    className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none sm:w-auto"
                                 />
                             </div>
-                            <Button
-                                size="sm"
-                                className="bg-emerald-600 shadow-none hover:bg-emerald-700"
-                                onClick={handleFilterSubmit}
-                            >
-                                <Filter className="mr-2 h-3 w-3" />
-                                Apply
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="shadow-none"
-                                onClick={handleResetFilters}
-                            >
-                                Reset
-                            </Button>
+
+                            <div className="flex w-full gap-2 sm:w-auto">
+                                <Button
+                                    size="sm"
+                                    className="w-full bg-emerald-600 shadow-none hover:bg-emerald-700 sm:w-auto"
+                                    onClick={handleFilterSubmit}
+                                >
+                                    <Filter className="mr-2 h-3 w-3" />
+                                    Apply
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="w-full shadow-none sm:w-auto"
+                                    onClick={handleResetFilters}
+                                >
+                                    Reset
+                                </Button>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
@@ -254,7 +273,7 @@ export default function Dashboard({
                     />
                 </div>
 
-                <div className="grid grid-cols-1 ">
+                <div className="grid grid-cols-1">
                     {/* Payment Schedules Table */}
                     <Card className="border-none shadow-sm ring-1 ring-slate-200 lg:col-span-2">
                         <CardHeader>
@@ -271,100 +290,161 @@ export default function Dashboard({
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead className="border-b border-slate-200 bg-slate-50">
-                                        <tr>
-                                            <th className="px-4 py-3 text-left font-semibold text-slate-600">
-                                                Borrower
-                                            </th>
-                                            <th className="px-4 py-3 text-left font-semibold text-slate-600">
-                                                Due Date
-                                            </th>
-                                            <th className="px-4 py-3 text-right font-semibold text-slate-600">
-                                                Amount Due
-                                            </th>
-                                            <th className="px-4 py-3 text-right font-semibold text-slate-600">
-                                                Paid
-                                            </th>
-                                            <th className="px-4 py-3 text-right font-semibold text-slate-600">
-                                                Remaining
-                                            </th>
-                                            <th className="px-4 py-3 text-center font-semibold text-slate-600">
-                                                Status
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                        {paginatedSchedules.length === 0 ? (
+                            <div className="hidden md:block">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead className="border-b border-slate-200 bg-slate-50">
                                             <tr>
-                                                <td
-                                                    colSpan={6}
-                                                    className="px-4 py-8 text-center text-slate-500"
-                                                >
-                                                    No payment schedules found
-                                                    for this period
-                                                </td>
+                                                <th className="px-4 py-3 text-left font-semibold text-slate-600">
+                                                    Borrower
+                                                </th>
+                                                <th className="px-4 py-3 text-left font-semibold text-slate-600">
+                                                    Due Date
+                                                </th>
+                                                <th className="px-4 py-3 text-right font-semibold text-slate-600">
+                                                    Amount Due
+                                                </th>
+                                                <th className="px-4 py-3 text-right font-semibold text-slate-600">
+                                                    Paid
+                                                </th>
+                                                <th className="px-4 py-3 text-right font-semibold text-slate-600">
+                                                    Remaining
+                                                </th>
+                                                <th className="px-4 py-3 text-center font-semibold text-slate-600">
+                                                    Status
+                                                </th>
                                             </tr>
-                                        ) : (
-                                            paginatedSchedules.map(
-                                                (schedule) => (
-                                                    <tr
-                                                        key={schedule.id}
-                                                        className="hover:bg-slate-50"
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {paginatedSchedules.length === 0 ? (
+                                                <tr>
+                                                    <td
+                                                        colSpan={6}
+                                                        className="px-4 py-8 text-center text-slate-500"
                                                     >
-                                                        <td className="px-4 py-3 font-medium text-slate-900">
+                                                        No payment schedules
+                                                        found for this period
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                paginatedSchedules.map(
+                                                    (schedule) => (
+                                                        <tr
+                                                            key={schedule.id}
+                                                            className="hover:bg-slate-50"
+                                                        >
+                                                            <td className="px-4 py-3 font-medium text-slate-900">
+                                                                {
+                                                                    schedule.borrower_name
+                                                                }
+                                                            </td>
+                                                            <td className="px-4 py-3 text-slate-600">
+                                                                {formatDate(
+                                                                    schedule.due_date,
+                                                                )}
+                                                            </td>
+                                                            <td className="px-4 py-3 text-right font-medium text-slate-900">
+                                                                {formatCurrency(
+                                                                    schedule.total_due,
+                                                                )}
+                                                            </td>
+                                                            <td className="px-4 py-3 text-right font-medium text-emerald-600">
+                                                                {formatCurrency(
+                                                                    schedule.paid_amount,
+                                                                )}
+                                                            </td>
+                                                            <td className="px-4 py-3 text-right font-medium text-orange-600">
+                                                                {formatCurrency(
+                                                                    schedule.remaining_amount,
+                                                                )}
+                                                            </td>
+                                                            <td className="px-4 py-3 text-center">
+                                                                <span
+                                                                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                                                        schedule.status ===
+                                                                        'paid'
+                                                                            ? 'bg-emerald-50 text-emerald-700'
+                                                                            : schedule.status ===
+                                                                                'overdue'
+                                                                              ? 'bg-red-50 text-red-700'
+                                                                              : 'bg-blue-50 text-blue-700'
+                                                                    }`}
+                                                                >
+                                                                    {schedule.status.toUpperCase()}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    ),
+                                                )
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div className="block md:hidden">
+                                {paginatedSchedules.length === 0 ? (
+                                    <div className="px-4 py-8 text-center text-slate-500">
+                                        No payment schedules found for this
+                                        period
+                                    </div>
+                                ) : (
+                                    paginatedSchedules.map((schedule) => (
+                                        <Card
+                                            key={schedule.id}
+                                            className="mb-3 border-none shadow-sm ring-1 ring-slate-200"
+                                        >
+                                            <CardContent className="p-3">
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="min-w-0">
+                                                        <p className="truncate font-medium text-slate-900">
                                                             {
                                                                 schedule.borrower_name
                                                             }
-                                                        </td>
-                                                        <td className="px-4 py-3 text-slate-600">
+                                                        </p>
+                                                        <p className="text-sm text-slate-600">
                                                             {formatDate(
                                                                 schedule.due_date,
                                                             )}
-                                                        </td>
-                                                        <td className="px-4 py-3 text-right font-medium text-slate-900">
-                                                            {formatCurrency(
-                                                                schedule.total_due,
-                                                            )}
-                                                        </td>
-                                                        <td className="px-4 py-3 text-right font-medium text-emerald-600">
-                                                            {formatCurrency(
-                                                                schedule.paid_amount,
-                                                            )}
-                                                        </td>
-                                                        <td className="px-4 py-3 text-right font-medium text-orange-600">
+                                                        </p>
+                                                        <div className="mt-2 flex flex-wrap items-start gap-2 text-sm text-slate-600 flex-col sm:flex-row ">
+                                                            <div>Due:</div>
+                                                            <div className="font-medium text-slate-900">
+                                                                {formatCurrency(
+                                                                    schedule.total_due,
+                                                                )}
+                                                            </div>
+                                                            <div>Paid:</div>
+                                                            <div className="font-medium text-emerald-600">
+                                                                {formatCurrency(
+                                                                    schedule.paid_amount,
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className="font-medium text-orange-600">
                                                             {formatCurrency(
                                                                 schedule.remaining_amount,
                                                             )}
-                                                        </td>
-                                                        <td className="px-4 py-3 text-center">
-                                                            <span
-                                                                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                                                                    schedule.status ===
-                                                                    'paid'
-                                                                        ? 'bg-emerald-50 text-emerald-700'
-                                                                        : schedule.status ===
-                                                                            'overdue'
-                                                                          ? 'bg-red-50 text-red-700'
-                                                                          : 'bg-blue-50 text-blue-700'
-                                                                }`}
-                                                            >
-                                                                {schedule.status.toUpperCase()}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                ),
-                                            )
-                                        )}
-                                    </tbody>
-                                </table>
+                                                        </div>
+                                                        <span
+                                                            className={`mt-2 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${schedule.status === 'paid' ? 'bg-emerald-50 text-emerald-700' : schedule.status === 'overdue' ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'}`}
+                                                        >
+                                                            {schedule.status.toUpperCase()}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))
+                                )}
                             </div>
 
                             {/* Pagination Controls */}
                             {paymentSchedules.length > itemsPerPage && (
-                                <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
-                                    <div className="text-sm text-slate-600">
+                                <div className="mt-4 flex flex-col gap-2 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="text-center text-sm text-slate-600 sm:text-left">
                                         Showing{' '}
                                         <span className="font-medium">
                                             {(currentPage - 1) * itemsPerPage +
@@ -383,7 +463,8 @@ export default function Dashboard({
                                         </span>{' '}
                                         results
                                     </div>
-                                    <div className="flex gap-2">
+
+                                    <div className="flex flex-wrap items-center justify-center gap-2 sm:flex-nowrap">
                                         <Button
                                             size="sm"
                                             variant="outline"
@@ -393,12 +474,17 @@ export default function Dashboard({
                                                 )
                                             }
                                             disabled={currentPage === 1}
-                                            className="shadow-none"
+                                            className="flex-shrink-0 shadow-none"
+                                            aria-label="Previous page"
                                         >
                                             <ChevronLeft className="h-4 w-4" />
-                                            Previous
+                                            <span className="hidden sm:inline">
+                                                Previous
+                                            </span>
                                         </Button>
-                                        <div className="flex items-center gap-1">
+
+                                        {/* Full page buttons on sm+ */}
+                                        <div className="hidden max-w-[40vw] items-center gap-1 overflow-x-auto sm:flex lg:max-w-none">
                                             {Array.from(
                                                 { length: totalPages },
                                                 (_, i) => i + 1,
@@ -424,6 +510,19 @@ export default function Dashboard({
                                                 </Button>
                                             ))}
                                         </div>
+
+                                        {/* Compact view on mobile */}
+                                        <div className="flex items-center gap-2 text-sm text-slate-600 sm:hidden">
+                                            <span>Page</span>
+                                            <span className="font-medium">
+                                                {currentPage}
+                                            </span>
+                                            <span>of</span>
+                                            <span className="font-medium">
+                                                {totalPages}
+                                            </span>
+                                        </div>
+
                                         <Button
                                             size="sm"
                                             variant="outline"
@@ -435,9 +534,12 @@ export default function Dashboard({
                                             disabled={
                                                 currentPage === totalPages
                                             }
-                                            className="shadow-none"
+                                            className="flex-shrink-0 shadow-none"
+                                            aria-label="Next page"
                                         >
-                                            Next
+                                            <span className="hidden sm:inline">
+                                                Next
+                                            </span>
                                             <ChevronRight className="h-4 w-4" />
                                         </Button>
                                     </div>
@@ -445,8 +547,6 @@ export default function Dashboard({
                             )}
                         </CardContent>
                     </Card>
-
-
                 </div>
             </div>
         </AppLayout>
@@ -457,21 +557,19 @@ export default function Dashboard({
 function StatCard({ title, value, icon, isAlert = false }: any) {
     return (
         <Card className="border-none shadow-sm ring-1 ring-slate-200">
-            <CardContent className="p-6">
-                <div className="mb-4 flex items-center justify-between">
-                    <div className="rounded-xl bg-slate-50 p-2.5 shadow-sm ring-1 ring-slate-100">
-                        {icon}
-                    </div>
-                    {isAlert && (
-                        <span className="rounded-md bg-red-100 px-2 py-1 text-[10px] font-bold tracking-wider text-red-700 uppercase">
-                            ALERT
-                        </span>
-                    )}
-                </div>
+            <CardContent className="p-3">
                 <div>
-                    <p className="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-                        {title}
-                    </p>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex min-w-0 items-center gap-3">
+                            <p className="truncate text-xs font-semibold tracking-widest text-slate-500 uppercase">
+                                {title}
+                            </p>
+                            <div className="rounded-xl bg-slate-50 p-2.5 shadow-sm ring-1 ring-slate-100">
+                                {icon}
+                            </div>
+                        </div>
+                    </div>
+
                     <h3 className="mt-1 text-2xl font-bold text-slate-900">
                         {value}
                     </h3>

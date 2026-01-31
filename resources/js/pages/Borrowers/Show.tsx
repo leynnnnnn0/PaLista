@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Briefcase, Home, User, Users } from 'lucide-react';
 
@@ -19,6 +20,12 @@ interface PaymentHistory {
     receipt_number: string | null;
     payment_date: string;
 }
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Borrowers',
+        href: '/borrowers/edit',
+    },
+];
 
 interface PaymentSchedule {
     id: number;
@@ -131,7 +138,7 @@ export default function Show({ borrower }: ShowProps) {
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Borrower Details" />
 
             <div className="px-8 py-8">

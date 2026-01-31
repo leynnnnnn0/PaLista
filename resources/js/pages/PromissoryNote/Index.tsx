@@ -3,9 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
 import { toast } from 'sonner';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Promissory Note',
+        href: '/promissory-note',
+    },
+];
 
 interface PromissoryNoteData {
     id: number;
@@ -70,7 +78,7 @@ export default function Index({ promissoryNote }: PageProps) {
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Promissory Note" />
 
             <div className="p-6 space-y-5">

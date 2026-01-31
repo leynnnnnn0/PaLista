@@ -39,7 +39,14 @@ import {
     ShieldCheck,
     UserPlus,
 } from 'lucide-react';
-import { Borrower, Paginated } from '@/types';
+import { Borrower, BreadcrumbItem, Paginated } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Borrowers',
+        href: '/borrowers',
+    },
+];
 
 interface PageProps {
     borrowers: Paginated<Borrower>;
@@ -59,7 +66,7 @@ export default function BorrowersIndex({borrowers}: PageProps) {
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Borrowers" />
 
             <div className="flex-1 space-y-8 p-8 pt-6">

@@ -14,6 +14,7 @@ class Loan extends Model implements Auditable
 
     protected $fillable = [
         'borrower_id',
+        'loan_number',
         'amount',
         'interest_type',
         'interest_value',
@@ -29,6 +30,25 @@ class Loan extends Model implements Auditable
     ];
 
     protected $appends = ['total_amount', 'interest', 'remaining_balance', 'duration', 'frequency', 'total_penalties', 'total_rebates'];
+
+    /**
+     * Generate a unique loan number
+     */
+    public static function generateLoanNumber()
+    {
+        do {
+            // Generate loan number with format: LN-YYYYMMDD-XXXX
+            // Example: LN-20260131-0001
+            $date = now()->format('Ymd');
+            $random = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $loanNumber = "LN-{$date}-{$random}";
+
+            // Check if this loan number already exists
+            $exists = static::where('loan_number', $loanNumber)->exists();
+        } while ($exists);
+
+        return $loanNumber;
+    }
 
     public function getFrequencyAttribute()
     {
@@ -85,7 +105,7 @@ class Loan extends Model implements Auditable
 
     public function getTotalAmountAttribute()
     {
-        return ($this->amount + $this->interest);
+        return ($this->amount + $this->interest) + $this->total_penalties;
     }
 
     public function getTotalPenaltiesAttribute()
@@ -149,6 +169,11 @@ class Loan extends Model implements Auditable
         parent::boot();
 
         static::creating(function ($loan) {
+            // Auto-generate loan number if not provided
+            if (empty($loan->loan_number)) {
+                $loan->loan_number = static::generateLoanNumber();
+            }
+
             // Set initial status if not provided
             if (empty($loan->status)) {
                 $loan->status = 'active';
