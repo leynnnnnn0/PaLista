@@ -135,6 +135,7 @@ class MyPautangController extends Controller
             'duration_unit' => ['required', 'string'],
             'interest_period' => ['required', 'string'],
             'is_existing_borrower' => ['required'],
+            'borrower_id' => ['nullable'],
         ]);
 
         DB::beginTransaction();
@@ -148,7 +149,9 @@ class MyPautangController extends Controller
             'province' => $validated['province'] ?? null,
             'zip_code' => $validated['zip_code'] ?? null,
             'country' => $validated['country'] ?? null,
-        ]) : Borrower::findOrFail($validated['is_existing_borrower']);
+        ]) : Borrower::findOrFail($validated['borrower_id']);
+
+
 
         $loan = $borrower->loans()->create([
             'amount' => $validated['principal_amount'],

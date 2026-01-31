@@ -188,6 +188,38 @@ export default function Dashboard({
                     </Button>
                 </div>
 
+                {/* Stat Grid */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <StatCard
+                        title="Borrowers"
+                        value={stats.totalBorrowers.toString()}
+                        icon={<Users className="text-blue-600" size={20} />}
+                    />
+                    <StatCard
+                        title="Active Accounts"
+                        value={stats.activeAccounts.toString()}
+                        icon={
+                            <CheckCircle
+                                className="text-emerald-600"
+                                size={20}
+                            />
+                        }
+                    />
+                    <StatCard
+                        title="Total Payables"
+                        value={formatCurrency(stats.totalPayables)}
+                        icon={<Clock className="text-orange-500" size={20} />}
+                    />
+                    <StatCard
+                        title="Overdue Loans"
+                        value={stats.overdueLoans.toString()}
+                        icon={
+                            <AlertCircle className="text-red-500" size={20} />
+                        }
+                        isAlert={stats.overdueLoans > 0}
+                    />
+                </div>
+
                 {/* Date Filter */}
                 <Card className="border-slate-200 bg-slate-50 shadow-none">
                     <CardContent className="p-4">
@@ -240,38 +272,6 @@ export default function Dashboard({
                         </div>
                     </CardContent>
                 </Card>
-
-                {/* Stat Grid */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <StatCard
-                        title="Borrowers"
-                        value={stats.totalBorrowers.toString()}
-                        icon={<Users className="text-blue-600" size={20} />}
-                    />
-                    <StatCard
-                        title="Active Accounts"
-                        value={stats.activeAccounts.toString()}
-                        icon={
-                            <CheckCircle
-                                className="text-emerald-600"
-                                size={20}
-                            />
-                        }
-                    />
-                    <StatCard
-                        title="Total Payables"
-                        value={formatCurrency(stats.totalPayables)}
-                        icon={<Clock className="text-orange-500" size={20} />}
-                    />
-                    <StatCard
-                        title="Overdue Loans"
-                        value={stats.overdueLoans.toString()}
-                        icon={
-                            <AlertCircle className="text-red-500" size={20} />
-                        }
-                        isAlert={stats.overdueLoans > 0}
-                    />
-                </div>
 
                 <div className="grid grid-cols-1">
                     {/* Payment Schedules Table */}
@@ -407,7 +407,7 @@ export default function Dashboard({
                                                                 schedule.due_date,
                                                             )}
                                                         </p>
-                                                        <div className="mt-2 flex flex-wrap items-start gap-2 text-sm text-slate-600 flex-col sm:flex-row ">
+                                                        <div className="mt-2 flex flex-col flex-wrap items-start gap-2 text-sm text-slate-600 sm:flex-row">
                                                             <div>Due:</div>
                                                             <div className="font-medium text-slate-900">
                                                                 {formatCurrency(

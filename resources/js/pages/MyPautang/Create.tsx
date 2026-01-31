@@ -93,7 +93,8 @@ export default function Create() {
         setIsExistingBorrower(borrower.id);
         setData({
             ...data,
-            is_existing_borrower: true,
+            is_existing_borrower: borrower.id,
+            borrower_id: borrower.id,
             first_name: borrower.first_name,
             last_name: borrower.last_name,
             contact_number: borrower.contact_number,
@@ -120,7 +121,8 @@ export default function Create() {
         setIsExistingBorrower(0);
         setData({
             ...data,
-            is_existing_borrower: false,
+            is_existing_borrower: 0,
+            borrower_id: '',
             first_name: '',
             last_name: '',
             contact_number: '',
@@ -162,7 +164,8 @@ export default function Create() {
         transaction_date: getTodayDate(),
         documents: [],
         payment_schedule: [],
-        is_existing_borrower: false,
+        is_existing_borrower: 0,
+        borrower_id: '',
     });
 
     const addPaymentRow = () => {
@@ -288,6 +291,8 @@ export default function Create() {
             );
             return;
         }
+
+        console.log(data);
 
         post('/my-pautang', {
             onSuccess: () => {
