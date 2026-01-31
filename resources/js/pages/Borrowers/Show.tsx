@@ -141,7 +141,7 @@ export default function Show({ borrower }: ShowProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Borrower Details" />
 
-            <div className="px-8 py-8">
+            <div className="p-5 md:p-8">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold tracking-tight">
                         Borrower Details
@@ -306,7 +306,7 @@ export default function Show({ borrower }: ShowProps) {
                                         Loan Summary
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="grid grid-cols-3 gap-5">
+                                <CardContent className="grid md:grid-cols-3 gap-5">
                                     <div>
                                         <p className="mb-1 text-xs text-muted-foreground">
                                             Total Loans

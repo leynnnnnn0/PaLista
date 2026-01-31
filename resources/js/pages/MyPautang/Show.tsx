@@ -369,7 +369,7 @@ export default function Show({ loan }: PageProps) {
     );
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="My Pautang Details" />
             <div className="p-4 sm:p-6 lg:p-8">
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

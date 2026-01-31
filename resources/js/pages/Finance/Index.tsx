@@ -15,7 +15,6 @@ import {
     ArrowUpRight,
     Calendar,
     DollarSign,
-    FileText,
     Filter,
     Gift,
     Percent,
@@ -144,7 +143,7 @@ export default function Finance({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Finance" />
 
-            <div className="flex-1 space-y-8 p-8 pt-6">
+            <div className="flex-1 space-y-8 p-4 pt-6 sm:p-8">
                 {/* Header Section */}
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -162,21 +161,21 @@ export default function Finance({
                     {/* Date Filter Section */}
                     <Card className="border-slate-200 bg-slate-50 shadow-none">
                         <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                                 <div className="flex items-center gap-2">
                                     <Calendar className="h-4 w-4 text-slate-500" />
                                     <span className="text-sm font-medium text-slate-700">
                                         Filter Period:
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-wrap items-center gap-2">
                                     <input
                                         type="date"
                                         value={dateFrom}
                                         onChange={(e) =>
                                             setDateFrom(e.target.value)
                                         }
-                                        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                        className="w-full min-w-0 rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none sm:w-auto"
                                     />
                                     <span className="text-sm text-slate-500">
                                         to
@@ -187,32 +186,34 @@ export default function Finance({
                                         onChange={(e) =>
                                             setDateTo(e.target.value)
                                         }
-                                        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                        className="w-full min-w-0 rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none sm:w-auto"
                                     />
                                 </div>
-                                <Button
-                                    size="sm"
-                                    className="bg-emerald-600 shadow-none hover:bg-emerald-700"
-                                    onClick={handleFilterSubmit}
-                                >
-                                    <Filter className="mr-2 h-3 w-3" />
-                                    Apply
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="shadow-none"
-                                    onClick={handleResetFilters}
-                                >
-                                    Reset
-                                </Button>
+                                <div className="ml-auto flex w-full gap-2 sm:w-auto">
+                                    <Button
+                                        size="sm"
+                                        className="w-full bg-emerald-600 shadow-none hover:bg-emerald-700 sm:w-auto"
+                                        onClick={handleFilterSubmit}
+                                    >
+                                        <Filter className="mr-2 h-3 w-3" />
+                                        Apply
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="w-full shadow-none sm:w-auto"
+                                        onClick={handleResetFilters}
+                                    >
+                                        Reset
+                                    </Button>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Primary Metrics Row */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
                     <FinanceMetricCard
                         title="Total Lent"
                         value={formatCurrency(metrics.totalLent)}
@@ -249,7 +250,7 @@ export default function Finance({
                 </div>
 
                 {/* Secondary Metrics Row */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
                     <FinanceMetricCard
                         title="Expected Return"
                         value={formatCurrency(metrics.expectedTotalReturn)}
@@ -294,7 +295,7 @@ export default function Finance({
                 </div>
 
                 {/* Charts Row */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
                     {/* Scheduled Due vs Actual Paid Chart */}
                     <Card className="col-span-4 border-slate-200 shadow-none">
                         <CardHeader>
@@ -307,7 +308,7 @@ export default function Finance({
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="pl-2">
-                            <div className="h-[350px] w-full">
+                            <div className="h-56 w-full sm:h-80">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={monthlyData} barGap={8}>
                                         <XAxis
@@ -368,7 +369,7 @@ export default function Finance({
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="h-[280px] w-full">
+                            <div className="h-48 w-full sm:h-72">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <RechartsPieChart>
                                         <Pie
@@ -397,14 +398,16 @@ export default function Finance({
                                         key={item.name}
                                         className="flex items-center justify-between text-sm"
                                     >
-                                        <div className="flex items-center gap-2 font-medium text-slate-600">
+                                        <div className="flex min-w-0 items-center gap-2 font-medium text-slate-600">
                                             <div
-                                                className="h-2 w-2 rounded-full"
+                                                className="h-2 w-2 shrink-0 rounded-full"
                                                 style={{
                                                     backgroundColor: item.color,
                                                 }}
                                             />
-                                            {item.name}
+                                            <span className="truncate">
+                                                {item.name}
+                                            </span>
                                         </div>
                                         <span className="font-bold text-slate-900">
                                             {formatCurrency(item.value)}
@@ -442,7 +445,7 @@ export default function Finance({
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="h-[280px] w-full">
+                            <div className="h-48 w-full sm:h-72">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <RechartsPieChart>
                                         <Pie
@@ -471,14 +474,16 @@ export default function Finance({
                                         key={item.name}
                                         className="flex items-center justify-between text-sm"
                                     >
-                                        <div className="flex items-center gap-2 font-medium text-slate-600">
+                                        <div className="flex min-w-0 items-center gap-2 font-medium text-slate-600">
                                             <div
-                                                className="h-2 w-2 rounded-full"
+                                                className="h-2 w-2 shrink-0 rounded-full"
                                                 style={{
                                                     backgroundColor: item.color,
                                                 }}
                                             />
-                                            {item.name}
+                                            <span className="truncate">
+                                                {item.name}
+                                            </span>
                                         </div>
                                         <span className="font-bold text-slate-900">
                                             {item.value} loans
