@@ -26,22 +26,19 @@ import { Textarea } from '@/components/ui/textarea';
 import {
     Banknote,
     CalendarDays,
-    FilePlus,
-    FileText,
     Plus,
     Search,
     Trash2,
-    Upload,
     User,
     Users,
     X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import axios from 'axios';
 import { BreadcrumbItem } from '@/types';
+import axios from 'axios';
 
-const breadcrumbs:  BreadcrumbItem[] = [
+const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Loans',
         href: '/my-pautang',
@@ -284,9 +281,7 @@ export default function Create() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const validSchedule = payments.every((p) => 
-            p.date && p.amount
-        );
+        const validSchedule = payments.every((p) => p.date && p.amount);
         if (!validSchedule) {
             toast.error(
                 'Please fill in all payment schedule dates and amounts',
@@ -440,7 +435,7 @@ export default function Create() {
                     <CardContent className="p-4 sm:p-6">
                         <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
                             <div className="space-y-2">
-                                <Label className="text-sm font-bold">
+                                <Label className="text-sm font-bold sm:text-base">
                                     Principal Amount{' '}
                                     <span className="text-red-500">*</span>
                                 </Label>
@@ -465,7 +460,7 @@ export default function Create() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-sm font-bold">
+                                <Label className="text-sm font-bold sm:text-base">
                                     Loan Duration
                                     <span className="text-red-500"> *</span>
                                 </Label>
@@ -473,7 +468,7 @@ export default function Create() {
                                     <Input
                                         type="number"
                                         placeholder="e.g. 3"
-                                        className="text-sm"
+                                        className="text-sm sm:text-base"
                                         value={data.loan_duration}
                                         onChange={(e) =>
                                             setData({
@@ -491,7 +486,7 @@ export default function Create() {
                                             })
                                         }
                                     >
-                                        <SelectTrigger className="w-32 text-sm">
+                                        <SelectTrigger className="w-32 text-sm sm:text-base">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -510,7 +505,7 @@ export default function Create() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-sm font-bold">
+                                <Label className="text-sm font-bold sm:text-base">
                                     Transaction Date
                                 </Label>
                                 <Input
@@ -528,7 +523,7 @@ export default function Create() {
 
                         <div className="mt-4 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
                             <div className="space-y-2">
-                                <Label className="text-sm font-bold">
+                                <Label className="text-sm font-bold sm:text-base">
                                     Interest Type
                                 </Label>
                                 <Select
@@ -540,7 +535,7 @@ export default function Create() {
                                         })
                                     }
                                 >
-                                    <SelectTrigger className="text-sm">
+                                    <SelectTrigger className="text-sm sm:text-base">
                                         <SelectValue placeholder="Select Type" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -555,7 +550,7 @@ export default function Create() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-sm font-bold">
+                                <Label className="text-sm font-bold sm:text-base">
                                     Interest Period
                                 </Label>
                                 <Select
@@ -567,7 +562,7 @@ export default function Create() {
                                         })
                                     }
                                 >
-                                    <SelectTrigger className="text-sm">
+                                    <SelectTrigger className="text-sm sm:text-base">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -605,7 +600,7 @@ export default function Create() {
                                                 ? 'e.g. 5'
                                                 : 'e.g. 50'
                                         }
-                                        className={`font-mono text-sm ${data.interest_type === 'fixed' ? 'pl-7' : ''}`}
+                                        className={`font-mono text-sm sm:text-base ${data.interest_type === 'fixed' ? 'pl-7' : ''}`}
                                         value={data.interest_value}
                                         onChange={(e) =>
                                             setData({
@@ -643,7 +638,7 @@ export default function Create() {
                                     <p className="text-xs font-medium text-slate-600 sm:text-sm">
                                         Total Amount (Principal + Interest)
                                     </p>
-                                    <p className="mt-1 text-[10px] text-slate-500 sm:text-xs">
+                                    <p className="mt-1 text-xs text-slate-500 sm:text-sm">
                                         Principal: ₱
                                         {parseFloat(
                                             data.principal_amount || 0,
@@ -652,7 +647,7 @@ export default function Create() {
                                     </p>
                                 </div>
                                 <div className="text-left sm:text-right">
-                                    <p className="font-mono text-2xl font-black text-blue-600 sm:text-3xl">
+                                    <p className="font-mono text-2xl font-black text-blue-600 sm:text-3xl md:text-4xl">
                                         ₱ {total.toFixed(2)}
                                     </p>
                                 </div>
@@ -683,7 +678,7 @@ export default function Create() {
                     <div className="border-b bg-slate-50/50 p-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div className="space-y-2">
-                                <Label className="text-sm font-bold">
+                                <Label className="text-sm font-bold sm:text-base">
                                     First Payment Date
                                 </Label>
                                 <Input
@@ -692,7 +687,7 @@ export default function Create() {
                                     onChange={(e) =>
                                         setFirstPaymentDate(e.target.value)
                                     }
-                                    className="text-sm"
+                                    className="text-sm sm:text-base"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -708,7 +703,7 @@ export default function Create() {
                                         })
                                     }
                                 >
-                                    <SelectTrigger className="text-sm">
+                                    <SelectTrigger className="text-sm sm:text-base">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -731,7 +726,7 @@ export default function Create() {
                                 <Button
                                     type="button"
                                     onClick={handleAutoGenerateSchedule}
-                                    className="w-full bg-blue-600 text-xs hover:bg-blue-700 sm:text-sm"
+                                    className="w-full bg-blue-600 text-sm hover:bg-blue-700 sm:text-base"
                                 >
                                     <CalendarDays className="mr-2 h-4 w-4" />
                                     Auto-Generate Schedule
@@ -748,7 +743,7 @@ export default function Create() {
                                 variant="outline"
                                 size="sm"
                                 onClick={addPaymentRow}
-                                className="border-blue-200 text-xs hover:bg-blue-50 sm:text-sm"
+                                className="border-blue-200 text-sm hover:bg-blue-50 sm:text-base"
                             >
                                 <Plus className="mr-1 h-3.5 w-3.5 sm:h-4 sm:w-4" />{' '}
                                 Add Payment
@@ -782,7 +777,7 @@ export default function Create() {
                                         </Label>
                                         <Input
                                             type="date"
-                                            className="text-sm"
+                                            className="text-sm sm:text-base"
                                             value={payment.date}
                                             onChange={(e) =>
                                                 updatePaymentRow(
@@ -803,7 +798,7 @@ export default function Create() {
                                             </span>
                                             <Input
                                                 type="number"
-                                                className="pl-7 font-mono text-sm"
+                                                className="pl-7 font-mono text-sm sm:text-base"
                                                 placeholder="0.00"
                                                 value={payment.amount}
                                                 onChange={(e) =>
@@ -822,7 +817,7 @@ export default function Create() {
 
                         {/* Desktop view - Table layout */}
                         <table className="hidden w-full text-left sm:table">
-                            <thead className="bg-slate-50 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+                            <thead className="bg-slate-50 text-xs font-bold tracking-widest text-slate-500 uppercase sm:text-sm">
                                 <tr>
                                     <th className="px-6 py-3">Payment No.</th>
                                     <th className="px-6 py-3">Due Date</th>
@@ -846,7 +841,7 @@ export default function Create() {
                                         <td className="px-6 py-4">
                                             <Input
                                                 type="date"
-                                                className="max-w-[180px]"
+                                                className="max-w-[180px] text-sm sm:text-base"
                                                 value={payment.date}
                                                 onChange={(e) =>
                                                     updatePaymentRow(
@@ -864,7 +859,7 @@ export default function Create() {
                                                 </span>
                                                 <Input
                                                     type="number"
-                                                    className="pl-7 font-mono"
+                                                    className="pl-7 font-mono text-sm sm:text-base"
                                                     placeholder="0.00"
                                                     value={payment.amount}
                                                     onChange={(e) =>
@@ -899,17 +894,17 @@ export default function Create() {
                         <div className="flex flex-col gap-2 border-t p-4 sm:flex-row sm:justify-between">
                             <div className="flex items-center gap-2">
                                 {scheduleTotal !== total && total > 0 && (
-                                    <p className="text-[10px] text-amber-600 sm:text-xs">
+                                    <p className="text-xs text-amber-600 sm:text-sm">
                                         ⚠️ Schedule total doesn't match loan
                                         total
                                     </p>
                                 )}
                             </div>
                             <div className="flex items-center justify-between gap-3 sm:gap-4">
-                                <span className="text-[10px] font-bold tracking-tighter text-slate-500 uppercase sm:text-xs">
+                                <span className="text-xs font-bold tracking-tighter text-slate-500 uppercase sm:text-sm">
                                     Total to Collect:
                                 </span>
-                                <span className="font-mono text-lg font-black text-slate-900 sm:text-xl">
+                                <span className="font-mono text-lg font-black text-slate-900 sm:text-xl md:text-2xl">
                                     ₱ {scheduleTotal.toFixed(2)}
                                 </span>
                             </div>
@@ -928,14 +923,14 @@ export default function Create() {
                         </CardHeader>
                         <CardContent className="space-y-3 sm:space-y-4">
                             <div className="space-y-2">
-                                <Label className="text-sm font-bold">
+                                <Label className="text-sm font-bold sm:text-base">
                                     Search Existing Borrower
                                 </Label>
                                 <div className="relative">
                                     <Search className="absolute top-2.5 left-3 h-4 w-4 text-slate-400 sm:top-3" />
                                     <Input
                                         placeholder="Type Borrower name..."
-                                        className="pl-10 text-sm"
+                                        className="pl-10 text-sm sm:text-base"
                                         value={searchQuery}
                                         onChange={handleSearchChange}
                                         onFocus={() =>
@@ -1018,7 +1013,7 @@ export default function Create() {
 
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                                 <div className="space-y-2">
-                                    <Label className="text-sm">
+                                    <Label className="text-sm sm:text-base">
                                         First Name{' '}
                                         <span className="text-xs text-red-500">
                                             *
@@ -1026,7 +1021,7 @@ export default function Create() {
                                     </Label>
                                     <Input
                                         placeholder="Juan"
-                                        className="text-sm"
+                                        className="text-sm sm:text-base"
                                         disabled={isExistingBorrower}
                                         value={data.first_name}
                                         onChange={(e) =>
@@ -1043,7 +1038,7 @@ export default function Create() {
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-sm">
+                                    <Label className="text-sm sm:text-base">
                                         Last Name{' '}
                                         <span className="text-xs text-red-500">
                                             *
@@ -1051,7 +1046,7 @@ export default function Create() {
                                     </Label>
                                     <Input
                                         placeholder="Dela Cruz"
-                                        className="text-sm"
+                                        className="text-sm sm:text-base"
                                         disabled={isExistingBorrower}
                                         value={data.last_name}
                                         onChange={(e) =>
@@ -1114,7 +1109,7 @@ export default function Create() {
                                 </Label>
                                 <Textarea
                                     placeholder="Street, Barangay, City, Province"
-                                    className="min-h-[70px] text-sm sm:min-h-[80px]"
+                                    className="min-h-[70px] text-sm sm:min-h-[80px] sm:text-base"
                                     disabled={isExistingBorrower}
                                     value={data.address}
                                     onChange={(e) =>
@@ -1267,7 +1262,7 @@ export default function Create() {
                                     <p className="text-xs font-bold sm:text-sm">
                                         Click to upload documents
                                     </p>
-                                    <p className="mt-1 text-center text-[9px] text-slate-500 uppercase sm:text-[10px]">
+                                    <p className="mt-1 text-center text-xs sm:text-sm text-slate-500 uppercase">
                                         PNG, JPG, PDF up to 10MB each
                                     </p>
                                 </label>

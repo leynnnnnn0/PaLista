@@ -1,4 +1,11 @@
 import ModuleHeading from '@/components/module-heading';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,19 +17,18 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import { Loan } from '@/types';
+import { BreadcrumbItem, Loan } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { get } from 'http';
 import {
+    AlertCircle,
     AlertTriangle,
     ArrowLeft,
-    XCircle,
+    Ban,
     Calendar,
     Clock,
     CreditCard,
@@ -31,13 +37,11 @@ import {
     Edit,
     FileText,
     History,
+    QrCode,
     TimerIcon,
     TrendingUp,
     User,
-    Ban,
-    AlertCircle,
-    Code,
-    QrCode,
+    XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -45,6 +49,13 @@ import { toast } from 'sonner';
 interface PageProps {
     loan: Loan;
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Loans',
+        href: '/my-pautang',
+    },
+];
 
 interface PaymentHistoryWithSchedule {
     id: number;
@@ -360,16 +371,16 @@ export default function Show({ loan }: PageProps) {
     return (
         <AppLayout>
             <Head title="My Pautang Details" />
-            <div className="p-8">
+            <div className="p-4 sm:p-6 lg:p-8">
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     {/* Main Content - Left Side */}
                     <div className="space-y-6 lg:col-span-2">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center sm:gap-0">
                             <ModuleHeading
                                 title="My Pautang Details"
                                 description="Installment order details and payment schedule"
                             />
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
                                 {!loan.is_voided && (
                                     <Button
                                         variant="destructive"
@@ -391,7 +402,11 @@ export default function Show({ loan }: PageProps) {
                                         </a>
                                     </Button>
                                 )}
-                                <Button variant="outline" asChild>
+                                <Button
+                                    className="hidden sm:flex"
+                                    variant="outline"
+                                    asChild
+                                >
                                     <Link href="/my-pautang">
                                         <ArrowLeft className="mr-2 h-4 w-4" />
                                         Back to List
@@ -633,8 +648,182 @@ export default function Show({ loan }: PageProps) {
                                 </div>
                             </CardHeader>
                             <CardContent className="p-0">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full">
+                                {/* Mobile: collapsible schedule list for cleaner view */}
+                                <div className="p-2 sm:hidden">
+                                    <Accordion type="single" collapsible>
+                                        {loan.payment_schedules?.map(
+                                            (schedule, index) => {
+                                                const amountPaid =
+                                                    schedule.payment_histories?.reduce(
+                                                        (sum, history) =>
+                                                            sum +
+                                                            parseFloat(
+                                                                history.amount_paid ||
+                                                                    0,
+                                                            ),
+                                                        0,
+                                                    ) || 0;
+                                                const remaining =
+                                                    parseFloat(
+                                                        schedule.total_due,
+                                                    ) - amountPaid;
+                                                const lastPaymentDate =
+                                                    schedule
+                                                        .payment_histories?.[
+                                                        schedule
+                                                            .payment_histories
+                                                            .length - 1
+                                                    ]?.payment_date;
+                                                const isPaid =
+                                                    schedule.status.toLowerCase() ===
+                                                    'paid';
+                                                const hasPenalty =
+                                                    schedule.penalty_amount &&
+                                                    parseFloat(
+                                                        schedule.penalty_amount,
+                                                    ) > 0;
+                                                const isOverdue =
+                                                    new Date()
+                                                        .toISOString()
+                                                        .split('T')[0] >
+                                                        schedule.due_date &&
+                                                    schedule.status.toLowerCase() ===
+                                                        'pending';
+
+                                                return (
+                                                    <AccordionItem
+                                                        key={schedule.id}
+                                                        value={`schedule-${schedule.id}`}
+                                                        className={`border-b last:border-b-0 ${isOverdue ? 'border-l-4 border-red-500' : ''}`}
+                                                    >
+                                                        <AccordionTrigger
+                                                            className={`px-3 py-3 ${!isPaid ? 'hover:bg-muted/50' : 'opacity-60'}`}
+                                                        >
+                                                            <div className="flex w-full items-center justify-between gap-3">
+                                                                <div className="min-w-0">
+                                                                    <p className="truncate text-sm font-medium">
+                                                                        #
+                                                                        {index +
+                                                                            1}{' '}
+                                                                        •{' '}
+                                                                        {formatDate(
+                                                                            schedule.due_date,
+                                                                        )}
+                                                                    </p>
+                                                                </div>
+
+                                                                <div className="flex shrink-0 items-center gap-3">
+                                                                    <span className="text-sm font-bold text-orange-600">
+                                                                        {formatCurrency(
+                                                                            remaining,
+                                                                        )}
+                                                                    </span>
+                                                                    <div className="shrink-0">
+                                                                        {isOverdue
+                                                                            ? getStatusBadge(
+                                                                                  'overdue',
+                                                                              )
+                                                                            : getStatusBadge(
+                                                                                  schedule.status,
+                                                                              )}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </AccordionTrigger>
+
+                                                        <AccordionContent>
+                                                            <div className="rounded bg-muted/10 p-3">
+                                                                <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                                                                    <div className="">
+                                                                        Amount
+                                                                        Paid
+                                                                    </div>
+                                                                    <div className="text-right font-medium">
+                                                                        {amountPaid >
+                                                                        0
+                                                                            ? formatCurrency(
+                                                                                  amountPaid,
+                                                                              )
+                                                                            : '-'}
+                                                                    </div>
+
+                                                                    <div>
+                                                                        Penalty
+                                                                    </div>
+                                                                    <div className="text-right font-medium">
+                                                                        {schedule.penalty_amount
+                                                                            ? formatCurrency(
+                                                                                  parseFloat(
+                                                                                      schedule.penalty_amount,
+                                                                                  ),
+                                                                              )
+                                                                            : '-'}
+                                                                    </div>
+
+                                                                    <div>
+                                                                        Payment
+                                                                        Date
+                                                                    </div>
+                                                                    <div className="text-right font-medium">
+                                                                        {lastPaymentDate
+                                                                            ? formatDate(
+                                                                                  lastPaymentDate,
+                                                                              )
+                                                                            : '-'}
+                                                                    </div>
+                                                                </div>
+
+                                                                <Separator className="my-3" />
+
+                                                                <div className="flex flex-col gap-2">
+                                                                    {!isPaid && (
+                                                                        <Button
+                                                                            className="w-full"
+                                                                            size="sm"
+                                                                            variant="outline"
+                                                                            onClick={() =>
+                                                                                handleOpenPaymentModal(
+                                                                                    schedule,
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            Pay
+                                                                        </Button>
+                                                                    )}
+
+                                                                    {!isPaid && (
+                                                                        <Button
+                                                                            className="w-full"
+                                                                            size="sm"
+                                                                            variant={
+                                                                                hasPenalty
+                                                                                    ? 'default'
+                                                                                    : 'destructive'
+                                                                            }
+                                                                            onClick={() =>
+                                                                                handleRowClick(
+                                                                                    schedule,
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            {hasPenalty
+                                                                                ? 'Edit Penalty'
+                                                                                : 'Add Penalty'}
+                                                                        </Button>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </AccordionContent>
+                                                    </AccordionItem>
+                                                );
+                                            },
+                                        )}
+                                    </Accordion>
+                                </div>
+
+                                {/* Desktop table - hidden on small screens */}
+                                <div className="hidden sm:block sm:overflow-x-auto">
+                                    <table className="w-full text-sm sm:text-base">
                                         <thead className="border-b bg-muted/50">
                                             <tr>
                                                 <th className="px-4 py-3 text-left text-sm font-semibold">
@@ -643,19 +832,19 @@ export default function Show({ loan }: PageProps) {
                                                 <th className="px-4 py-3 text-left text-sm font-semibold">
                                                     Due Date
                                                 </th>
-                                                <th className="px-4 py-3 text-right text-sm font-semibold">
+                                                <th className="hidden px-4 py-3 text-right text-sm font-semibold sm:table-cell">
                                                     Amount Due
                                                 </th>
-                                                <th className="px-4 py-3 text-right text-sm font-semibold">
+                                                <th className="hidden px-4 py-3 text-right text-sm font-semibold sm:table-cell">
                                                     Amount Paid
                                                 </th>
                                                 <th className="px-4 py-3 text-right text-sm font-semibold">
                                                     Remaining
                                                 </th>
-                                                <th className="px-4 py-3 text-right text-sm font-semibold">
+                                                <th className="hidden px-4 py-3 text-right text-sm font-semibold sm:table-cell">
                                                     Penalty
                                                 </th>
-                                                <th className="px-4 py-3 text-center text-sm font-semibold">
+                                                <th className="hidden px-4 py-3 text-center text-sm font-semibold sm:table-cell">
                                                     Payment Date
                                                 </th>
                                                 <th className="px-4 py-3 text-center text-sm font-semibold">
@@ -717,14 +906,14 @@ export default function Show({ loan }: PageProps) {
                                                                     schedule.due_date,
                                                                 )}
                                                             </td>
-                                                            <td className="px-4 py-4 text-right text-sm font-medium">
+                                                            <td className="hidden px-4 py-4 text-right text-sm font-medium sm:table-cell">
                                                                 {formatCurrency(
                                                                     parseFloat(
                                                                         schedule.total_due,
                                                                     ),
                                                                 )}
                                                             </td>
-                                                            <td className="px-4 py-4 text-right text-sm">
+                                                            <td className="hidden px-4 py-4 text-right text-sm sm:table-cell">
                                                                 {amountPaid > 0
                                                                     ? formatCurrency(
                                                                           amountPaid,
@@ -736,7 +925,7 @@ export default function Show({ loan }: PageProps) {
                                                                     remaining,
                                                                 )}
                                                             </td>
-                                                            <td className="px-4 py-4 text-right">
+                                                            <td className="hidden px-4 py-4 text-right sm:table-cell">
                                                                 <div className="flex items-center justify-end gap-1">
                                                                     <span className="text-sm font-medium text-red-600">
                                                                         {schedule.penalty_amount
@@ -753,7 +942,7 @@ export default function Show({ loan }: PageProps) {
                                                                         )}
                                                                 </div>
                                                             </td>
-                                                            <td className="px-4 py-4 text-center text-sm">
+                                                            <td className="hidden px-4 py-4 text-center text-sm sm:table-cell">
                                                                 {lastPaymentDate
                                                                     ? formatDate(
                                                                           lastPaymentDate,
@@ -907,21 +1096,21 @@ export default function Show({ loan }: PageProps) {
                                                     key={index}
                                                     className="space-y-2 rounded-lg border p-3 transition-colors hover:border-primary"
                                                 >
-                                                    <div className="flex items-start justify-between">
-                                                        <div>
-                                                            <p className="text-sm font-medium">
+                                                    <div className="flex min-w-0 items-start justify-between">
+                                                        <div className="min-w-0">
+                                                            <p className="truncate text-sm font-medium">
                                                                 Payment #
                                                                 {
                                                                     history.schedule_number
                                                                 }
                                                             </p>
-                                                            <p className="text-xs text-muted-foreground">
+                                                            <p className="truncate text-xs text-muted-foreground">
                                                                 {formatDate(
                                                                     history.payment_date,
                                                                 )}
                                                             </p>
                                                         </div>
-                                                        <div className="flex items-center gap-2">
+                                                        <div className="flex shrink-0 items-center gap-2">
                                                             <p className="text-sm font-bold text-green-600">
                                                                 {formatCurrency(
                                                                     parseFloat(
