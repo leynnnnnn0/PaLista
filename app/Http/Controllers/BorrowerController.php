@@ -33,6 +33,7 @@ class BorrowerController extends Controller
 
     public function show(Borrower $borrower)
     {
+        if($borrower->user_id != Auth::id()) return response(403);
         $borrower->load('references', 'loans.payment_schedules.payment_histories', 'documents');
 
         return Inertia::render('Borrowers/Show', [
