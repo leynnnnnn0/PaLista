@@ -42,6 +42,7 @@ class PromissoryNoteController extends Controller
     {
         // Fetch loan with relationships
         $loan = Loan::with(['borrower', 'payment_schedules'])->findOrFail($loanId);
+        if($loan->user_id != Auth::id()) return response(403);;
         $borrower = $loan->borrower;
 
         // Calculate total amount in words

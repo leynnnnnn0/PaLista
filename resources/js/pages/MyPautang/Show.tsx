@@ -381,7 +381,7 @@ export default function Show({ loan }: PageProps) {
                                 description="Installment order details and payment schedule"
                             />
                             <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-                                {!loan.is_voided && (
+                                {!loan.is_voided && loan.status != 'completed' && (
                                     <Button
                                         variant="destructive"
                                         className="cursor-pointer"
@@ -391,7 +391,7 @@ export default function Show({ loan }: PageProps) {
                                         Void Loan
                                     </Button>
                                 )}
-                                {!loan.is_voided && (
+                                {!loan.is_voided && loan.status != 'completed' && (
                                     <Button variant="outline" asChild>
                                         <a
                                             target="_blank"

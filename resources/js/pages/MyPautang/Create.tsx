@@ -67,7 +67,7 @@ export default function Create() {
 
         setIsSearching(true);
         try {
-            const response = await axios.get('/api/borrowers', {
+            const response = await axios.get('/borrowers/search', {
                 params: { search: searchTerm },
             });
             setSearchResults(response.data.data || response.data);
@@ -298,7 +298,7 @@ export default function Create() {
             },
             onError: (e) => {
                 toast.error('Failed to register loan. Please check the form.');
-                console.log(e);
+              
             },
         });
     };

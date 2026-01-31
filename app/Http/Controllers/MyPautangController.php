@@ -7,6 +7,7 @@ use App\Models\Loan;
 use App\Models\PaymentSchedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -15,7 +16,7 @@ class MyPautangController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Loan::with('borrower');
+        $query = Loan::where('user_id', Auth::id())->with('borrower');
 
         // Search by borrower name
         if ($request->filled('search')) {
@@ -98,7 +99,9 @@ class MyPautangController extends Controller
 
     public function show($id)
     {
-        $loan = Loan::with('borrower', 'payment_schedules.payment_histories')->findOrFail($id);
+        $loan = Loan::where('user_id', Auth::id())->with('borrower', 'payment_schedules.payment_histories')->findOrFail($id);
+
+        
                  
         return Inertia::render('MyPautang/Show', compact('loan'));
     }
@@ -195,7 +198,8 @@ class MyPautangController extends Controller
 
     public function penalty(Request $request, $id)
     {
-        $paymentSchedule = PaymentSchedule::findOrFail($id);
+        $paymentSchedule = PaymentSchedule::with('loan')->findOrFail($id);
+        if($paymentSchedule->loan->user_id != Auth::id()) return response(403);
         $validated = $request->validate([
             'penalty_amount' => ['required', 'numeric'],
             'penalty_remarks' => ['nullable', 'string'],
@@ -222,8 +226,10 @@ class MyPautangController extends Controller
         DB::beginTransaction();
 
         try {
-            $paymentSchedule = PaymentSchedule::with('payment_histories')->findOrFail($validated['payment_schedule_id']);
+            $paymentSchedule = PaymentSchedule::with('payment_histories', 'loan')->findOrFail($validated['payment_schedule_id']);
 
+            
+            if($paymentSchedule->loan->user_id != Auth::id()) return response(403);
             // Calculate total amount paid so far
             $totalPaid = $paymentSchedule->payment_histories->sum('amount_paid');
 
@@ -283,7 +289,8 @@ class MyPautangController extends Controller
         DB::beginTransaction();
 
         try {
-            $paymentHistory = \App\Models\PaymentHistory::findOrFail($id);
+            $paymentHistory = \App\Models\PaymentHistory::with('payment_schedule.loan')->findOrFail($id);
+            if (Auth::id() != $paymentHistory->payment_schedule->loan->user_id) return response(403);
             $paymentSchedule = $paymentHistory->payment_schedule;
 
             // Calculate total paid excluding current payment being edited
@@ -342,7 +349,10 @@ class MyPautangController extends Controller
         DB::beginTransaction();
 
         try {
-            $paymentHistory = \App\Models\PaymentHistory::findOrFail($id);
+            $paymentHistory = \App\Models\PaymentHistory::with('payment_schedule.loan')->findOrFail($id);
+
+            if (Auth::id() != $paymentHistory->payment_schedule->loan->user_id) return response(403);
+
             $paymentSchedule = $paymentHistory->payment_schedule;
 
             // Delete payment history
@@ -380,6 +390,7 @@ class MyPautangController extends Controller
      */
     private function updateLoanBalance(Loan $loan)
     {
+        if(Auth::id() != $loan->user_id) return response(403);
         // Refresh the loan to get latest data
         $loan->refresh();
 
@@ -408,6 +419,7 @@ class MyPautangController extends Controller
             'void_reason' => ['required', 'string', 'max:1000'],
         ]);
         $loan = Loan::findOrFail($id);
+        if (Auth::id() != $loan->user_id) return response(403);
         $loan->is_voided = true;
         $loan->voided_at = now();
         $loan->void_reason = $validated['void_reason'];

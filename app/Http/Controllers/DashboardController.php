@@ -8,6 +8,7 @@ use App\Models\PaymentSchedule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -32,11 +33,13 @@ class DashboardController extends Controller
 
         // Active Accounts (active loans)
         $activeAccounts = Loan::where('status', 'active')
+            ->where('user_id', Auth::id())
             ->where('is_voided', false)
             ->count();
 
         // Total Payables (remaining balance of all active loans)
         $totalPayables = Loan::where('is_voided', false)
+            ->where('user_id', Auth::id())
             ->get()
             ->sum('remaining_balance');
 

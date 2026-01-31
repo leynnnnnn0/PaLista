@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
+ 
 // Sitemap route with corrected structure
 Route::get('/sitemap.xml', function () {
     $pages = [
@@ -80,6 +81,10 @@ Route::get('/contact', function () {
 
 // Protected routes
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/borrowers/search', [App\Http\Controllers\Api\BorrowerController::class, 'search'])
+        ->name('borrowers.search');
+        
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('my-pautang', MyPautangController::class);
@@ -107,6 +112,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('loans.promissory-note.download');
 
     Route::put('/my-pautang/{loan}/void', [MyPautangController::class, 'void']);
+
+
 });
 
 require __DIR__ . '/settings.php';

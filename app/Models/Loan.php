@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -13,6 +14,7 @@ class Loan extends Model implements Auditable
     use HasFactory, \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
+        'user_id',
         'borrower_id',
         'loan_number',
         'amount',
@@ -30,6 +32,11 @@ class Loan extends Model implements Auditable
     ];
 
     protected $appends = ['total_amount', 'interest', 'remaining_balance', 'duration', 'frequency', 'total_penalties', 'total_rebates'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * Generate a unique loan number
@@ -178,6 +185,12 @@ class Loan extends Model implements Auditable
             if (empty($loan->status)) {
                 $loan->status = 'active';
             }
+
+            if (empty($loan->user_id)) {
+
+                $loan->user_id = Auth::id();
+            }
+
         });
     }
 }

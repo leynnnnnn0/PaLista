@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Borrower;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class BorrowerController extends Controller
 {
     public function index()
     {
-        $borrowers = Borrower::with('loans.payment_schedules.payment_histories')->latest()->paginate(10);
+        $borrowers = Borrower::with('loans.payment_schedules.payment_histories')
+        ->where('user_id', Auth::id())
+        ->latest()
+        ->paginate(10);
         $borrowers->transform(function ($borrower) {
             return [
                 'id' => $borrower->id,
@@ -95,7 +99,7 @@ class BorrowerController extends Controller
             'reference_contact' => ['nullable', 'string'],
         ]);
 
-        $borrower = Borrower::findOrFail($id);
+        $borrower = Borrower::where('user_id', Auth::id())->findOrFail($id);
         $borrower->update([
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
@@ -121,6 +125,7 @@ class BorrowerController extends Controller
 
     public function edit(Borrower $borrower)
     {
+        if($borrower->user_id != Auth::id()) return response(403);
         $borrower->load('references');
         return Inertia::render('Borrowers/Edit', [
             'borrower' => $borrower

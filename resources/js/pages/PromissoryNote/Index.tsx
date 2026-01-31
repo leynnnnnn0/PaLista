@@ -26,7 +26,7 @@ interface PageProps {
 }
 
 export default function Index({ promissoryNote }: PageProps) {
-    console.log(promissoryNote);
+
     const { data, setData, put, processing, errors } =
         useForm<PromissoryNoteData>({
             id: promissoryNote.id,
@@ -188,10 +188,7 @@ export default function Index({ promissoryNote }: PageProps) {
                         <CardTitle>Preview</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
-                        <div
-                            ref={outerRef}
-                            className="w-full p-4"
-                        >
+                        <div ref={outerRef} className="w-full p-4">
                             <div className="flex justify-center">
                                 <div
                                     ref={innerRef}

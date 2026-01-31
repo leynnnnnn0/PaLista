@@ -55,4 +55,14 @@ class User extends Authenticatable implements Auditable
     {
         return $this->hasOne(PromissoryNote::class);
     }
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    public function borrowers()
+    {
+        return $this->hasMany(Borrower::class);
+    }
 }

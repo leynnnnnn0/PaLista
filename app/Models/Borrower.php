@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
@@ -13,6 +14,7 @@ class Borrower extends Model implements Auditable
     use HasFactory, \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
+        'user_id',
         'first_name',
         'last_name',
         'email',
@@ -45,5 +47,23 @@ class Borrower extends Model implements Auditable
     public function references()
     {
         return $this->hasOne(BorrowerReference::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($borrower) {
+
+            if (empty($borrower->user_id)) {
+
+                $borrower->user_id = Auth::id();
+            }
+        });
     }
 }

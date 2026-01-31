@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('loan_number')->unique();
             $table->foreignId('borrower_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 15, 2);

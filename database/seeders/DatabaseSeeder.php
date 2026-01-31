@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
         $borrowers = [];
         for ($i = 1; $i <= 10; $i++) {
             $borrowers[] = Borrower::create([
+                'user_id' => 1,
                 'first_name' => fake()->firstName(),
                 'last_name' => fake()->lastName(),
                 'email' => fake()->unique()->safeEmail(),
@@ -126,6 +127,7 @@ class DatabaseSeeder extends Seeder
 
             // Create loan
             $loan = Loan::create([
+                'user_id' => 1,
                 'borrower_id' => $borrower->id,
                 'amount' => $principalAmount,
                 'interest_type' => $interestType,
