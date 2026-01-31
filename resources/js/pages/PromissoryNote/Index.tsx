@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { FormEvent } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -77,11 +77,37 @@ export default function Index({ promissoryNote }: PageProps) {
         ],
     };
 
+    const outerRef = useRef<HTMLDivElement | null>(null);
+    const innerRef = useRef<HTMLDivElement | null>(null);
+    const [scale, setScale] = useState<number>(1);
+
+    useEffect(() => {
+        const compute = () => {
+            if (!outerRef.current || !innerRef.current) return;
+            const outerWidth =
+                outerRef.current.clientWidth || window.innerWidth;
+            const innerWidth = innerRef.current.getBoundingClientRect().width;
+            let newScale = outerWidth / innerWidth;
+            newScale = Math.min(1, Math.max(0.35, newScale));
+            setScale(newScale);
+        };
+
+        compute();
+        const ro = new ResizeObserver(compute);
+        if (outerRef.current) ro.observe(outerRef.current);
+        if (innerRef.current) ro.observe(innerRef.current);
+        window.addEventListener('resize', compute);
+        return () => {
+            ro.disconnect();
+            window.removeEventListener('resize', compute);
+        };
+    }, []);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Promissory Note" />
 
-            <div className="p-6 space-y-5">
+            <div className="space-y-5 p-6">
                 <div className="flex items-center justify-between space-y-2">
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight">
@@ -162,227 +188,62 @@ export default function Index({ promissoryNote }: PageProps) {
                         <CardTitle>Preview</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
-                        <div className="bg-white">
-                            {/* PROMISSORY NOTE PAGE */}
-                            <div className="mx-auto max-w-[210mm] p-[20mm] font-serif text-[11pt] leading-relaxed">
-                                {/* Header */}
-                                <div className="mb-8 border-b-2 border-black pb-3 text-center">
-                                    <h1 className="mb-1 text-[18pt] font-bold tracking-[2px]">
-                                        PROMISSORY NOTE
-                                    </h1>
-                                </div>
-
-                                {/* Info Section */}
-                                <div className="mb-6">
-                                    <div className="mb-2 flex">
-                                        <span className="w-[100px] flex-shrink-0 font-bold">
-                                            Date:
-                                        </span>
-                                        <span className="flex-grow border-b border-black pl-3">
-                                            {fakeData.transaction_date}
-                                        </span>
-                                    </div>
-                                    <div className="mb-2 flex">
-                                        <span className="w-[100px] flex-shrink-0 font-bold">
-                                            Place:
-                                        </span>
-                                        <span className="flex-grow border-b border-black pl-3">
-                                            {fakeData.borrower.address}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Promise Text */}
-                                <div className="my-6 border-2 border-black p-4 text-justify leading-[1.8]">
-                                    I, <strong>{fakeData.borrower.name}</strong>
-                                    , of legal age, with residence at{' '}
-                                    <strong>{fakeData.borrower.address}</strong>
-                                    , hereby promise to pay, the sum of{' '}
-                                    <strong>
-                                        {fakeData.total_amount_words}
-                                    </strong>{' '}
-                                    (
-                                    <strong>
-                                        ₱
-                                        {fakeData.total_amount.toLocaleString(
-                                            'en-US',
-                                            {
-                                                minimumFractionDigits: 2,
-                                                maximumFractionDigits: 2,
-                                            },
-                                        )}
-                                    </strong>
-                                    ), payable under the following terms and
-                                    conditions:
-                                </div>
-
-                                {/* Terms Section */}
-                                <div className="my-6">
-                                    <div className="mb-3 flex text-justify">
-                                        <span className="w-[150px] flex-shrink-0 font-bold">
-                                            1. Loan Amount:
-                                        </span>
-                                        <span className="flex-grow">
-                                            ₱
-                                            {fakeData.principal_amount.toLocaleString(
-                                                'en-US',
-                                                {
-                                                    minimumFractionDigits: 2,
-                                                    maximumFractionDigits: 2,
-                                                },
-                                            )}
-                                        </span>
+                        <div
+                            ref={outerRef}
+                            className="w-full p-4"
+                        >
+                            <div className="flex justify-center">
+                                <div
+                                    ref={innerRef}
+                                    className="inline-block w-[210mm] bg-white p-[20mm] font-serif text-[9pt] leading-relaxed"
+                                    style={{
+                                        transform: `scale(${scale})`,
+                                        transformOrigin: 'top left',
+                                    }}
+                                >
+                                    {/* Header */}
+                                    <div className="mb-8 border-b-2 border-black pb-3 text-center">
+                                        <h1 className="mb-1 text-[14pt] font-bold tracking-[2px]">
+                                            PROMISSORY NOTE
+                                        </h1>
                                     </div>
 
-                                    <div className="mb-3 flex text-justify">
-                                        <span className="w-[150px] flex-shrink-0 font-bold">
-                                            2. Interest Rate:
-                                        </span>
-                                        <span className="flex-grow">
-                                            {fakeData.interest_value}% per month
-                                            payable in{' '}
-                                            {fakeData.payment_frequency_text}{' '}
-                                            installments
-                                        </span>
-                                    </div>
-
-                                    <div className="mb-3 flex text-justify">
-                                        <span className="w-[150px] flex-shrink-0 font-bold">
-                                            3. Payment Schedule:
-                                        </span>
-                                        <span className="flex-grow">
-                                            Payments shall be made every 21 of
-                                            the month (twice monthly) starting
-                                            on {fakeData.first_payment_date},
-                                            until full settlement on or before{' '}
-                                            {fakeData.maturity_date}.
-                                        </span>
-                                    </div>
-
-                                    <div className="mb-3 flex text-justify">
-                                        <span className="w-[150px] flex-shrink-0 font-bold">
-                                            4. Maturity Date:
-                                        </span>
-                                        <span className="flex-grow">
-                                            The loan shall be fully paid on or
-                                            before{' '}
-                                            <strong>
-                                                {fakeData.maturity_date}
-                                            </strong>
-                                            .
-                                        </span>
-                                    </div>
-
-                                    <div className="mb-3 flex text-justify">
-                                        <span className="w-[150px] flex-shrink-0 font-bold">
-                                            5. Penalty:
-                                        </span>
-                                        <span className="flex-grow">
-                                            A penalty of{' '}
-                                            {data.penalty_percentage || '2'}%
-                                            per {fakeData.penalty_period} shall
-                                            be charged on overdue payments.
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Legal Text */}
-                                <div className="my-6 text-justify leading-[1.8]">
-                                    In case of default, I authorize the lender
-                                    to take necessary legal action for the
-                                    collection of the balance, including
-                                    penalties and expenses incurred.
-                                </div>
-
-                                <div className="my-6 text-justify leading-[1.8]">
-                                    This Promissory Note is signed voluntarily
-                                    and with full understanding of its terms.
-                                </div>
-
-                                {/* Signature Section */}
-                                <div className="mt-10 mb-10">
-                                    <div className="mb-8">
-                                        <div className="mb-1 font-bold">
-                                            Borrower's Signature:
+                                    {/* Info Section */}
+                                    <div className="mb-6">
+                                        <div className="mb-2 flex">
+                                            <span className="w-[100px] flex-shrink-0 font-bold">
+                                                Date:
+                                            </span>
+                                            <span className="flex-grow border-b border-black pl-3">
+                                                {fakeData.transaction_date}
+                                            </span>
                                         </div>
-                                        <div className="mt-10 mb-1 w-[300px] border-t border-black"></div>
-                                        <div className="mb-1 font-bold">
-                                            Printed Name:
-                                        </div>
-                                        <div>{fakeData.borrower.name}</div>
-                                    </div>
-
-                                    <div className="mb-8">
-                                        <div className="mb-1 font-bold">
-                                            Lender's Signature:
-                                        </div>
-                                        <div className="mt-10 mb-1 w-[300px] border-t border-black"></div>
-                                        <div className="mb-1 font-bold">
-                                            Printed Name:
-                                        </div>
-                                        <div>
-                                            {data.lender ||
-                                                '_____________________________'}
+                                        <div className="mb-2 flex">
+                                            <span className="w-[100px] flex-shrink-0 font-bold">
+                                                Place:
+                                            </span>
+                                            <span className="flex-grow border-b border-black pl-3">
+                                                {fakeData.borrower.address}
+                                            </span>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Page Break Indicator */}
-                                <div className="my-10 border-t-4 border-dashed border-gray-400"></div>
-
-                                {/* SCHEDULE OF PAYMENTS PAGE */}
-                                <div className="my-10 border-t-2 border-b-2 border-black py-4 text-center">
-                                    <h2 className="text-[16pt] font-bold tracking-[2px]">
-                                        SCHEDULE OF PAYMENTS
-                                    </h2>
-                                </div>
-
-                                {/* Schedule Info */}
-                                <div className="mb-5 border border-gray-300 bg-gray-100 p-4">
-                                    <div className="flex py-1">
-                                        <span className="w-[180px] font-bold">
-                                            Name:
-                                        </span>
-                                        <span className="flex-grow">
+                                    {/* Promise Text */}
+                                    <div className="my-6 border-2 border-black p-4 text-justify leading-[1.8]">
+                                        I,{' '}
+                                        <strong>
                                             {fakeData.borrower.name}
-                                        </span>
-                                    </div>
-                                    <div className="flex py-1">
-                                        <span className="w-[180px] font-bold">
-                                            Loan Date:
-                                        </span>
-                                        <span className="flex-grow">
-                                            {fakeData.transaction_date}
-                                        </span>
-                                    </div>
-                                    <div className="flex py-1">
-                                        <span className="w-[180px] font-bold">
-                                            Loan Number:
-                                        </span>
-                                        <span className="flex-grow">
-                                            {fakeData.loan_number}
-                                        </span>
-                                    </div>
-                                    <div className="flex py-1">
-                                        <span className="w-[180px] font-bold">
-                                            Loan Amount:
-                                        </span>
-                                        <span className="flex-grow">
-                                            ₱
-                                            {fakeData.principal_amount.toLocaleString(
-                                                'en-US',
-                                                {
-                                                    minimumFractionDigits: 2,
-                                                    maximumFractionDigits: 2,
-                                                },
-                                            )}
-                                        </span>
-                                    </div>
-                                    <div className="flex py-1">
-                                        <span className="w-[180px] font-bold">
-                                            Loan Payable:
-                                        </span>
-                                        <span className="flex-grow">
+                                        </strong>
+                                        , of legal age, with residence at{' '}
+                                        <strong>
+                                            {fakeData.borrower.address}
+                                        </strong>
+                                        , hereby promise to pay, the sum of{' '}
+                                        <strong>
+                                            {fakeData.total_amount_words}
+                                        </strong>{' '}
+                                        (
+                                        <strong>
                                             ₱
                                             {fakeData.total_amount.toLocaleString(
                                                 'en-US',
@@ -391,82 +252,272 @@ export default function Index({ promissoryNote }: PageProps) {
                                                     maximumFractionDigits: 2,
                                                 },
                                             )}
-                                        </span>
+                                        </strong>
+                                        ), payable under the following terms and
+                                        conditions:
                                     </div>
-                                    <div className="flex py-1">
-                                        <span className="w-[180px] font-bold">
-                                            Payable:
-                                        </span>
-                                        <span className="flex-grow">
-                                            Semi Monthly
-                                        </span>
-                                    </div>
-                                    <div className="flex py-1">
-                                        <span className="w-[180px] font-bold">
-                                            Number of Payments:
-                                        </span>
-                                        <span className="flex-grow">
-                                            {fakeData.payment_schedules.length}
-                                        </span>
-                                    </div>
-                                    <div className="flex py-1">
-                                        <span className="w-[180px] font-bold">
-                                            Due (Semi Monthly):
-                                        </span>
-                                        <span className="flex-grow">
-                                            ₱
-                                            {fakeData.payment_amount.toLocaleString(
-                                                'en-US',
-                                                {
-                                                    minimumFractionDigits: 2,
-                                                    maximumFractionDigits: 2,
-                                                },
-                                            )}
-                                        </span>
-                                    </div>
-                                </div>
 
-                                {/* Payment Table */}
-                                <table className="mt-5 w-full border-collapse">
-                                    <thead>
-                                        <tr>
-                                            <th className="border border-black bg-gray-800 p-3 text-center font-bold text-white">
-                                                Date
-                                            </th>
-                                            <th className="border border-black bg-gray-800 p-3 text-center font-bold text-white">
-                                                Amount Due
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {fakeData.payment_schedules.map(
-                                            (payment, index) => (
-                                                <tr
-                                                    key={index}
-                                                    className={
-                                                        index % 2 === 0
-                                                            ? 'bg-gray-50'
-                                                            : 'bg-white'
-                                                    }
-                                                >
-                                                    <td className="border border-black p-2 text-center">
-                                                        {payment.due_date}
-                                                    </td>
-                                                    <td className="border border-black p-2 text-right font-bold">
-                                                        ₱
-                                                        {payment.amount_due.toLocaleString(
-                                                            'en-US',
-                                                            {
-                                                                minimumFractionDigits: 2,
-                                                                maximumFractionDigits: 2,
-                                                            },
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            ),
-                                        )}
-                                    </tbody>
-                                </table>
+                                    {/* Terms Section */}
+                                    <div className="my-6">
+                                        <div className="mb-3 flex text-justify">
+                                            <span className="w-[150px] flex-shrink-0 font-bold">
+                                                1. Loan Amount:
+                                            </span>
+                                            <span className="flex-grow">
+                                                ₱
+                                                {fakeData.principal_amount.toLocaleString(
+                                                    'en-US',
+                                                    {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    },
+                                                )}
+                                            </span>
+                                        </div>
+
+                                        <div className="mb-3 flex text-justify">
+                                            <span className="w-[150px] flex-shrink-0 font-bold">
+                                                2. Interest Rate:
+                                            </span>
+                                            <span className="flex-grow">
+                                                {fakeData.interest_value}% per
+                                                month payable in{' '}
+                                                {
+                                                    fakeData.payment_frequency_text
+                                                }{' '}
+                                                installments
+                                            </span>
+                                        </div>
+
+                                        <div className="mb-3 flex text-justify">
+                                            <span className="w-[150px] flex-shrink-0 font-bold">
+                                                3. Payment Schedule:
+                                            </span>
+                                            <span className="flex-grow">
+                                                Payments shall be made every 21
+                                                of the month (twice monthly)
+                                                starting on{' '}
+                                                {fakeData.first_payment_date},
+                                                until full settlement on or
+                                                before {fakeData.maturity_date}.
+                                            </span>
+                                        </div>
+
+                                        <div className="mb-3 flex text-justify">
+                                            <span className="w-[150px] flex-shrink-0 font-bold">
+                                                4. Maturity Date:
+                                            </span>
+                                            <span className="flex-grow">
+                                                The loan shall be fully paid on
+                                                or before{' '}
+                                                <strong>
+                                                    {fakeData.maturity_date}
+                                                </strong>
+                                                .
+                                            </span>
+                                        </div>
+
+                                        <div className="mb-3 flex text-justify">
+                                            <span className="w-[150px] flex-shrink-0 font-bold">
+                                                5. Penalty:
+                                            </span>
+                                            <span className="flex-grow">
+                                                A penalty of{' '}
+                                                {data.penalty_percentage || '2'}
+                                                % per {fakeData.penalty_period}{' '}
+                                                shall be charged on overdue
+                                                payments.
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Legal Text */}
+                                    <div className="my-6 text-justify leading-[1.8]">
+                                        In case of default, I authorize the
+                                        lender to take necessary legal action
+                                        for the collection of the balance,
+                                        including penalties and expenses
+                                        incurred.
+                                    </div>
+
+                                    <div className="my-6 text-justify leading-[1.8]">
+                                        This Promissory Note is signed
+                                        voluntarily and with full understanding
+                                        of its terms.
+                                    </div>
+
+                                    {/* Signature Section */}
+                                    <div className="mt-10 mb-10">
+                                        <div className="mb-8">
+                                            <div className="mb-1 font-bold">
+                                                Borrower's Signature:
+                                            </div>
+                                            <div className="mt-10 mb-1 w-[300px] border-t border-black"></div>
+                                            <div className="mb-1 font-bold">
+                                                Printed Name:
+                                            </div>
+                                            <div>{fakeData.borrower.name}</div>
+                                        </div>
+
+                                        <div className="mb-8">
+                                            <div className="mb-1 font-bold">
+                                                Lender's Signature:
+                                            </div>
+                                            <div className="mt-10 mb-1 w-[300px] border-t border-black"></div>
+                                            <div className="mb-1 font-bold">
+                                                Printed Name:
+                                            </div>
+                                            <div>
+                                                {data.lender ||
+                                                    '_____________________________'}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Page Break Indicator */}
+                                    <div className="my-10 border-t-4 border-dashed border-gray-400"></div>
+
+                                    {/* SCHEDULE OF PAYMENTS PAGE */}
+                                    <div className="my-10 border-t-2 border-b-2 border-black py-4 text-center">
+                                        <h2 className="text-[12pt] font-bold tracking-[2px]">
+                                            SCHEDULE OF PAYMENTS
+                                        </h2>
+                                    </div>
+
+                                    {/* Schedule Info */}
+                                    <div className="mb-5 border border-gray-300 bg-gray-100 p-4">
+                                        <div className="flex py-1">
+                                            <span className="w-[180px] font-bold">
+                                                Name:
+                                            </span>
+                                            <span className="flex-grow">
+                                                {fakeData.borrower.name}
+                                            </span>
+                                        </div>
+                                        <div className="flex py-1">
+                                            <span className="w-[180px] font-bold">
+                                                Loan Date:
+                                            </span>
+                                            <span className="flex-grow">
+                                                {fakeData.transaction_date}
+                                            </span>
+                                        </div>
+                                        <div className="flex py-1">
+                                            <span className="w-[180px] font-bold">
+                                                Loan Number:
+                                            </span>
+                                            <span className="flex-grow">
+                                                {fakeData.loan_number}
+                                            </span>
+                                        </div>
+                                        <div className="flex py-1">
+                                            <span className="w-[180px] font-bold">
+                                                Loan Amount:
+                                            </span>
+                                            <span className="flex-grow">
+                                                ₱
+                                                {fakeData.principal_amount.toLocaleString(
+                                                    'en-US',
+                                                    {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    },
+                                                )}
+                                            </span>
+                                        </div>
+                                        <div className="flex py-1">
+                                            <span className="w-[180px] font-bold">
+                                                Loan Payable:
+                                            </span>
+                                            <span className="flex-grow">
+                                                ₱
+                                                {fakeData.total_amount.toLocaleString(
+                                                    'en-US',
+                                                    {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    },
+                                                )}
+                                            </span>
+                                        </div>
+                                        <div className="flex py-1">
+                                            <span className="w-[180px] font-bold">
+                                                Payable:
+                                            </span>
+                                            <span className="flex-grow">
+                                                Semi Monthly
+                                            </span>
+                                        </div>
+                                        <div className="flex py-1">
+                                            <span className="w-[180px] font-bold">
+                                                Number of Payments:
+                                            </span>
+                                            <span className="flex-grow">
+                                                {
+                                                    fakeData.payment_schedules
+                                                        .length
+                                                }
+                                            </span>
+                                        </div>
+                                        <div className="flex py-1">
+                                            <span className="w-[180px] font-bold">
+                                                Due (Semi Monthly):
+                                            </span>
+                                            <span className="flex-grow">
+                                                ₱
+                                                {fakeData.payment_amount.toLocaleString(
+                                                    'en-US',
+                                                    {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    },
+                                                )}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Payment Table */}
+                                    <table className="mt-5 w-full border-collapse">
+                                        <thead>
+                                            <tr>
+                                                <th className="border border-black bg-gray-800 p-3 text-center font-bold text-white">
+                                                    Date
+                                                </th>
+                                                <th className="border border-black bg-gray-800 p-3 text-center font-bold text-white">
+                                                    Amount Due
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {fakeData.payment_schedules.map(
+                                                (payment, index) => (
+                                                    <tr
+                                                        key={index}
+                                                        className={
+                                                            index % 2 === 0
+                                                                ? 'bg-gray-50'
+                                                                : 'bg-white'
+                                                        }
+                                                    >
+                                                        <td className="border border-black p-2 text-center">
+                                                            {payment.due_date}
+                                                        </td>
+                                                        <td className="border border-black p-2 text-right font-bold">
+                                                            ₱
+                                                            {payment.amount_due.toLocaleString(
+                                                                'en-US',
+                                                                {
+                                                                    minimumFractionDigits: 2,
+                                                                    maximumFractionDigits: 2,
+                                                                },
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ),
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </CardContent>
