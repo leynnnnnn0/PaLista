@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class FinanceController extends Controller
 {
@@ -25,12 +26,14 @@ class FinanceController extends Controller
 
         // Calculate Total Lent (sum of active loans within date range based on transaction_date)
         $totalLent = Loan::where('is_voided', false)
+            ->where('user_id', Auth::id())
             ->whereBetween('transaction_date', [$dateFrom, $dateTo])
             ->sum('amount');
 
         // Calculate Total Interest (total_amount - principal amount)
         $totalInterest = Loan::where('is_voided', false)
             ->whereBetween('transaction_date', [$dateFrom, $dateTo])
+            ->where('user_id', Auth::id())
             ->get()
             ->sum(function ($loan) {
                 return $loan->total_amount - $loan->amount;
@@ -40,6 +43,7 @@ class FinanceController extends Controller
         $totalRebate = PaymentSchedule::whereHas('loan', function ($query) use ($dateFrom, $dateTo) {
             $query->where('is_voided', false)
                 ->whereBetween('transaction_date', [$dateFrom, $dateTo]);
+            $query->where('user_id', Auth::id());
         })
             ->sum('rebate_amount');
 
@@ -47,6 +51,7 @@ class FinanceController extends Controller
         $totalPenalties = PaymentSchedule::whereHas('loan', function ($query) use ($dateFrom, $dateTo) {
             $query->where('is_voided', false)
                 ->whereBetween('transaction_date', [$dateFrom, $dateTo]);
+            $query->where('user_id', Auth::id());
         })
             ->sum('penalty_amount');
 
@@ -57,21 +62,25 @@ class FinanceController extends Controller
         $totalPaid = PaymentHistory::whereBetween('payment_date', [$dateFrom, $dateTo])
             ->whereHas('payment_schedule.loan', function ($query) {
                 $query->where('is_voided', false);
+                $query->where('user_id', Auth::id());
             })
             ->sum('amount_paid');
 
         // Calculate Total Payables (sum of remaining balances for active loans only)
         $activeLoans = Loan::where('is_voided', false)
+            ->where('user_id', Auth::id())
             ->get();
 
         $totalPayables = $activeLoans->sum('remaining_balance');
 
         // Calculate Net Profit (Total Paid - Total Lent) for active loans only
         $activeLentAmount = Loan::where('is_voided', false)
+            ->where('user_id', Auth::id())
             ->sum('amount');
 
         $activeTotalPaid = PaymentHistory::whereHas('payment_schedule.loan', function ($query) {
             $query->where('is_voided', false);
+            $query->where('user_id', Auth::id());
         })
             ->sum('amount_paid');
 
@@ -84,6 +93,7 @@ class FinanceController extends Controller
 
         // Calculate Average Loan Size
         $activeLoanCount = Loan::where('is_voided', false)
+            ->where('user_id', Auth::id())
             ->whereBetween('transaction_date', [$dateFrom, $dateTo])
             ->count();
 
@@ -146,6 +156,7 @@ class FinanceController extends Controller
             $schedulesInMonth = PaymentSchedule::whereBetween('due_date', [$monthStart, $monthEnd])
                 ->whereHas('loan', function ($query) {
                     $query->where('is_voided', false);
+                    $query->where('user_id', Auth::id());
                 })
                 ->with('payment_histories')
                 ->get();
@@ -180,6 +191,7 @@ class FinanceController extends Controller
             ->where('due_date', '>=', $today)
             ->whereHas('loan', function ($query) {
                 $query->where('is_voided', false);
+                $query->where('user_id', Auth::id());
             })
             ->get()
             ->sum(function ($schedule) {
@@ -192,6 +204,7 @@ class FinanceController extends Controller
             ->where('due_date', '<', $today)
             ->whereHas('loan', function ($query) {
                 $query->where('is_voided', false);
+                $query->where('user_id', Auth::id());
             })
             ->get()
             ->sum(function ($schedule) {
@@ -216,6 +229,7 @@ class FinanceController extends Controller
     private function getLoanStatusDistribution($dateFrom, $dateTo)
     {
         $statusCounts = Loan::where('is_voided', false)
+            ->where('user_id', Auth::id())
             ->whereBetween('transaction_date', [$dateFrom, $dateTo])
             ->select('status', DB::raw('count(*) as count'))
             ->groupBy('status')
@@ -236,6 +250,4 @@ class FinanceController extends Controller
             ];
         })->values()->toArray();
     }
-
- 
 }
