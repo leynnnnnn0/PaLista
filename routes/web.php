@@ -79,12 +79,16 @@ Route::get('/contact', function () {
     return Inertia::render('contact');
 })->name('contact');
 
+Route::get('/features', function () {
+    return Inertia::render('features');
+})->name('features');
+
 // Protected routes
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/borrowers/search', [App\Http\Controllers\Api\BorrowerController::class, 'search'])
         ->name('borrowers.search');
-        
+
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('my-pautang', MyPautangController::class);

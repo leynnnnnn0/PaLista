@@ -10,6 +10,7 @@ export default function NavigationEnhanced() {
 
     const navLinks = [
         { href: '/', label: 'Home' },
+        { href: '/features', label: 'Features' },
         { href: '/pricing', label: 'Pricing' },
         { href: '/about-us', label: 'About Us' },
         { href: '/contact', label: 'Contact' },

@@ -358,7 +358,7 @@ export default function Show({ borrower }: ShowProps) {
                                             <div className="flex items-start justify-between">
                                                 <div>
                                                     <CardTitle className="text-lg">
-                                                        Loan #{index + 1}
+                                                        <a className='underline cursor-pointer' href={`/my-pautang/${loan.id}`} target='_blank'>{loan.loan_number}</a>
                                                     </CardTitle>
                                                     <CardDescription className="mt-1">
                                                         {formatDate(

@@ -53,8 +53,8 @@ export default function Create()
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Add New Borrower" />
 
-            <div className="p-6 space-y-5">
-                  <div className="flex items-center justify-between space-y-2">
+            <div className="space-y-5 p-6">
+                <div className="flex items-center justify-between space-y-2">
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight">
                             Create New Borrower
@@ -63,7 +63,7 @@ export default function Create()
                             Please input all the required fields.
                         </p>
                     </div>
-                    </div>
+                </div>
                 {/* LEFT COLUMN: Borrower Information */}
                 <Card className="border-slate-200 shadow-sm">
                     <CardHeader className="mb-2 flex flex-row items-center gap-2 border-b pb-3 sm:mb-4 sm:pb-4">
@@ -73,15 +73,17 @@ export default function Create()
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3 sm:space-y-4">
-
-
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                             <div className="space-y-2">
-                                <Label className="text-sm">First Name *</Label>
+                                <Label className="text-sm">
+                                    First Name{' '}
+                                    <span className="text-red-500 text-xs">
+                                        *
+                                    </span>
+                                </Label>
                                 <Input
                                     placeholder="Juan"
                                     className="text-sm"
-                       
                                     value={data.first_name}
                                     onChange={(e) =>
                                         setData('first_name', e.target.value)
@@ -94,11 +96,15 @@ export default function Create()
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-sm">Last Name *</Label>
+                                <Label className="text-sm">
+                                    Last Name{' '}
+                                    <span className="text-red-500 text-xs">
+                                        *
+                                    </span>
+                                </Label>
                                 <Input
                                     placeholder="Dela Cruz"
                                     className="text-sm"
-                       
                                     value={data.last_name}
                                     onChange={(e) =>
                                         setData('last_name', e.target.value)
@@ -117,7 +123,6 @@ export default function Create()
                             <Input
                                 placeholder="0912 345 6789"
                                 className="text-sm"
-                   
                                 value={data.contact_number}
                                 onChange={(e) =>
                                     setData('contact_number', e.target.value)
@@ -136,7 +141,6 @@ export default function Create()
                                 type="email"
                                 placeholder="Enter email"
                                 className="text-sm"
-                   
                                 value={data.email}
                                 onChange={(e) =>
                                     setData('email', e.target.value)
@@ -156,7 +160,6 @@ export default function Create()
                             <Textarea
                                 placeholder="Street, Barangay, City, Province"
                                 className="min-h-[70px] text-sm sm:min-h-[80px]"
-                   
                                 value={data.address}
                                 onChange={(e) =>
                                     setData('address', e.target.value)
@@ -174,7 +177,6 @@ export default function Create()
                                 <Label className="text-sm">City *</Label>
                                 <Input
                                     className="text-sm"
-                       
                                     value={data.city}
                                     onChange={(e) =>
                                         setData('city', e.target.value)
@@ -190,7 +192,6 @@ export default function Create()
                                 <Label className="text-sm">Province *</Label>
                                 <Input
                                     className="text-sm"
-                       
                                     value={data.province}
                                     onChange={(e) =>
                                         setData('province', e.target.value)
@@ -209,7 +210,6 @@ export default function Create()
                                 <Label className="text-sm">ZipCode</Label>
                                 <Input
                                     className="text-sm"
-                       
                                     value={data.zip_code}
                                     onChange={(e) =>
                                         setData('zip_code', e.target.value)
@@ -247,7 +247,6 @@ export default function Create()
                                 <Input
                                     placeholder="Full name"
                                     className="text-sm"
-                       
                                     value={data.reference_name}
                                     onChange={(e) =>
                                         setData(
@@ -267,7 +266,6 @@ export default function Create()
                                 <Input
                                     placeholder="09XX XXX XXXX"
                                     className="text-sm"
-                       
                                     value={data.reference_contact}
                                     onChange={(e) =>
                                         setData(
@@ -284,16 +282,16 @@ export default function Create()
                             </div>
                         </CardContent>
                     </Card>
-
-                   
                 </div>
 
                 <div className="flex items-center justify-end gap-3">
-                    <Button className="cursor-pointer w-full bg-blue-600 px-6 shadow-md hover:bg-blue-700 sm:w-auto sm:px-8"
-                    onClick={() => handleSubmit()}
-                        disabled={processing}>
-                            Save
-                        </Button>
+                    <Button
+                        className="w-full cursor-pointer bg-blue-600 px-6 shadow-md hover:bg-blue-700 sm:w-auto sm:px-8"
+                        onClick={() => handleSubmit()}
+                        disabled={processing}
+                    >
+                        Save
+                    </Button>
                 </div>
             </div>
         </AppLayout>

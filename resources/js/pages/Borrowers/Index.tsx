@@ -114,7 +114,7 @@ export default function BorrowersIndex({borrowers}: PageProps) {
                                 Contact Number
                             </TableHead>
                             <TableHead className="hidden md:table-cell">
-                                Emamil
+                                Email
                             </TableHead>
                             <TableHead className="hidden lg:table-cell">
                                 Total Loans
