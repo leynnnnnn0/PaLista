@@ -29,7 +29,7 @@ class DashboardController extends Controller
             : Carbon::now();
 
         // Total Borrowers
-        $totalBorrowers = Borrower::count();
+        $totalBorrowers = Borrower::where('user_id', Auth::id())->count();
 
         // Active Accounts (active loans)
         $activeAccounts = Loan::where('status', 'active')
@@ -49,6 +49,7 @@ class DashboardController extends Controller
             ->where('due_date', '<', $today)
             ->whereHas('loan', function ($query) {
                 $query->where('is_voided', false);
+                $query->where('user_id', Auth::id());
             })
             ->count();
 
@@ -56,6 +57,7 @@ class DashboardController extends Controller
         $paymentSchedules = PaymentSchedule::whereBetween('due_date', [$dateFrom, $dateTo])
             ->whereHas('loan', function ($query) {
                 $query->where('is_voided', false);
+                 $query->where('user_id', Auth::id());
             })
             ->with(['loan.borrower', 'payment_histories'])
             ->orderBy('due_date', 'asc')
