@@ -47,10 +47,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Create() {
     const [payments, setPayments] = useState([{ date: '', amount: '' }]);
+    const [paymentDateErrors, setPaymentDateErrors] = useState<string[]>(['']);
     const [files, setFiles] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [paymentTerms, setPaymentTerms] = useState('');
     const [firstPaymentDate, setFirstPaymentDate] = useState('');
+    const [firstPaymentDateError, setFirstPaymentDateError] = useState('');
+    const [transactionDateError, setTransactionDateError] = useState('');
     const [isExistingBorrower, setIsExistingBorrower] = useState(0);
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -89,7 +92,6 @@ export default function Create() {
     };
 
     const handleSelectBorrower = (borrower) => {
-        console.log(borrower);
         setIsExistingBorrower(borrower.id);
         setData({
             ...data,
@@ -142,6 +144,21 @@ export default function Create() {
         return today.toISOString().split('T')[0];
     };
 
+    const isValidISODate = (dateStr: string) => {
+        if (!dateStr) return false;
+        // Accept YYYY-MM-DD only
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+        const [y, m, d] = dateStr.split('-').map(Number);
+        const date = new Date(dateStr);
+        return (
+            date instanceof Date &&
+            !isNaN(date.getTime()) &&
+            date.getUTCFullYear() === y &&
+            date.getUTCMonth() + 1 === m &&
+            date.getUTCDate() === d
+        );
+    };
+
     const { data, setData, post, processing, errors, reset } = useForm({
         first_name: '',
         last_name: '',
@@ -170,6 +187,7 @@ export default function Create() {
 
     const addPaymentRow = () => {
         setPayments([...payments, { date: '', amount: '' }]);
+        setPaymentDateErrors([...paymentDateErrors, '']);
     };
 
     const removePaymentRow = (index) => {
@@ -177,6 +195,10 @@ export default function Create() {
         const updated = [...payments];
         updated.splice(index, 1);
         setPayments(updated);
+        const err = [...paymentDateErrors];
+        err.splice(index, 1);
+        setPaymentDateErrors(err);
+        setData('payment_schedule', updated);
     };
 
     const updatePaymentRow = (index, field, value) => {
@@ -184,6 +206,16 @@ export default function Create() {
         updated[index][field] = value;
         setPayments(updated);
         setData('payment_schedule', updated);
+
+        if (field === 'date') {
+            const errs = [...paymentDateErrors];
+            if (!isValidISODate(value)) {
+                errs[index] = value ? 'Invalid date' : 'Please enter a date';
+            } else {
+                errs[index] = '';
+            }
+            setPaymentDateErrors(errs);
+        }
     };
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -272,6 +304,7 @@ export default function Create() {
         }));
 
         setPayments(newPayments);
+        setPaymentDateErrors(new Array(newPayments.length).fill(''));
         setData({ ...data, payment_schedule: newPayments });
     };
 
@@ -284,26 +317,65 @@ export default function Create() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const validSchedule = payments.every((p) => p.date && p.amount);
-        if (!validSchedule) {
-            toast.error(
-                'Please fill in all payment schedule dates and amounts',
-            );
+        // Validate transaction date
+        if (!data.transaction_date || !isValidISODate(data.transaction_date)) {
+            setTransactionDateError('Invalid transaction date');
+            toast.error('Please enter a valid transaction date');
+            return;
+        } else {
+            setTransactionDateError('');
+        }
+
+        // Validate payment schedule
+        const errs = [...paymentDateErrors];
+        let hasPaymentErrors = false;
+
+        if (payments.length === 0) {
+            toast.error('Please add at least one payment');
             return;
         }
 
-        console.log(data);
+        payments.forEach((p, i) => {
+            if (!p.date || !p.amount) {
+                errs[i] = !p.date
+                    ? 'Please enter a date'
+                    : 'Please enter an amount';
+                hasPaymentErrors = true;
+            } else if (!isValidISODate(p.date)) {
+                errs[i] = 'Invalid date';
+                hasPaymentErrors = true;
+            } else {
+                errs[i] = '';
+            }
+        });
+
+        setPaymentDateErrors(errs);
+
+        if (hasPaymentErrors) {
+            toast.error('Please fix payment schedule dates and amounts');
+            return;
+        }
+
+        // Optional: validate firstPaymentDate if provided
+        if (firstPaymentDate && !isValidISODate(firstPaymentDate)) {
+            setFirstPaymentDateError('Invalid date');
+            toast.error('Please fix the first payment date');
+            return;
+        }
 
         post('/my-pautang', {
             onSuccess: () => {
                 toast.success('Loan registered successfully');
                 reset();
                 setPayments([{ date: '', amount: '' }]);
+                setPaymentDateErrors(['']);
+                setFirstPaymentDate('');
+                setFirstPaymentDateError('');
+                setTransactionDateError('');
                 setUploadedFiles([]);
             },
             onError: (e) => {
                 toast.error('Failed to register loan. Please check the form.');
-              
             },
         });
     };
@@ -332,6 +404,14 @@ export default function Create() {
         if (!firstPaymentDate) {
             toast.info('Please select the first payment date');
             return;
+        }
+
+        if (!isValidISODate(firstPaymentDate)) {
+            setFirstPaymentDateError('Invalid date');
+            toast.error('Please enter a valid first payment date');
+            return;
+        } else {
+            setFirstPaymentDateError('');
         }
 
         const total = calculateTotal();
@@ -413,6 +493,7 @@ export default function Create() {
         }
 
         setPayments(newPayments);
+        setPaymentDateErrors(new Array(newPayments.length).fill(''));
         setData({ ...data, payment_schedule: newPayments });
     };
 
@@ -516,13 +597,28 @@ export default function Create() {
                                 <Input
                                     type="date"
                                     value={data.transaction_date}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        const val = e.target.value;
                                         setData({
                                             ...data,
-                                            transaction_date: e.target.value,
-                                        })
-                                    }
+                                            transaction_date: val,
+                                        });
+                                        if (!val) {
+                                            setTransactionDateError('');
+                                        } else if (!isValidISODate(val)) {
+                                            setTransactionDateError(
+                                                'Invalid date',
+                                            );
+                                        } else {
+                                            setTransactionDateError('');
+                                        }
+                                    }}
                                 />
+                                {transactionDateError && (
+                                    <p className="text-xs text-red-500">
+                                        {transactionDateError}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -689,11 +785,23 @@ export default function Create() {
                                 <Input
                                     type="date"
                                     value={firstPaymentDate}
-                                    onChange={(e) =>
-                                        setFirstPaymentDate(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        setFirstPaymentDate(val);
+                                        if (!val) setFirstPaymentDateError('');
+                                        else if (!isValidISODate(val))
+                                            setFirstPaymentDateError(
+                                                'Invalid date',
+                                            );
+                                        else setFirstPaymentDateError('');
+                                    }}
                                     className="text-sm sm:text-base"
                                 />
+                                {firstPaymentDateError && (
+                                    <p className="text-xs text-red-500">
+                                        {firstPaymentDateError}
+                                    </p>
+                                )}
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-sm font-bold">
@@ -792,6 +900,11 @@ export default function Create() {
                                                 )
                                             }
                                         />
+                                        {paymentDateErrors[index] && (
+                                            <p className="text-xs text-red-500">
+                                                {paymentDateErrors[index]}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="space-y-2">
                                         <Label className="text-xs">
@@ -856,6 +969,11 @@ export default function Create() {
                                                     )
                                                 }
                                             />
+                                            {paymentDateErrors[index] && (
+                                                <p className="text-xs text-red-500">
+                                                    {paymentDateErrors[index]}
+                                                </p>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="relative max-w-[200px]">
