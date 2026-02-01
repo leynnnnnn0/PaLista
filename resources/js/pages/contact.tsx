@@ -1,38 +1,36 @@
-import { login } from '@/routes';
-import { Link } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { Facebook, Mail, MessageSquare, Send, Video } from 'lucide-react';
-import { useState } from 'react';
-import LOGO from '../../images/mainLogo.png';
 import { toast } from 'sonner';
-import Navigation from '../pages/navigation';
 import Footer from '../pages/footer';
+import Navigation from '../pages/navigation';
+
 export default function Contact() {
-    const [formData, setFormData] = useState({
+    const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
         subject: '',
         message: '',
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
 
-        // Simulate form submission
-        setTimeout(() => {
-            toast.success("Thank you for reaching out! We'll get back to you soon.");
-            setFormData({ name: '', email: '', subject: '', message: '' });
-            setIsSubmitting(false);
-        }, 1000);
+        post('/contact', {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success(
+                    "Thank you for reaching out! We'll get back to you soon.",
+                );
+                reset();
+            },
+            onError: (errors) => {
+                if (errors.error) {
+                    toast.error(errors.error);
+                } else {
+                    toast.error('Please check the form for errors.');
+                }
+            },
+        });
     };
 
     const contactMethods = [
@@ -86,7 +84,7 @@ export default function Contact() {
     return (
         <div className="min-h-screen bg-white font-sans">
             {/* Navigation */}
-            <Navigation/>
+            <Navigation />
 
             {/* Hero Section */}
             <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 px-6 pt-20 pb-16">
@@ -219,12 +217,24 @@ export default function Contact() {
                                         type="text"
                                         id="name"
                                         name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
+                                        value={data.name}
+                                        onChange={(e) =>
+                                            setData('name', e.target.value)
+                                        }
+                                        maxLength={100}
                                         required
-                                        className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-slate-900 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+                                        className={`w-full rounded-xl border-2 ${
+                                            errors.name
+                                                ? 'border-red-500'
+                                                : 'border-slate-200'
+                                        } bg-white px-4 py-3 text-slate-900 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 focus:outline-none`}
                                         placeholder="Juan Dela Cruz"
                                     />
+                                    {errors.name && (
+                                        <p className="mt-1 text-sm text-red-600">
+                                            {errors.name}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -238,12 +248,24 @@ export default function Contact() {
                                         type="email"
                                         id="email"
                                         name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
+                                        value={data.email}
+                                        onChange={(e) =>
+                                            setData('email', e.target.value)
+                                        }
+                                        maxLength={255}
                                         required
-                                        className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-slate-900 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+                                        className={`w-full rounded-xl border-2 ${
+                                            errors.email
+                                                ? 'border-red-500'
+                                                : 'border-slate-200'
+                                        } bg-white px-4 py-3 text-slate-900 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 focus:outline-none`}
                                         placeholder="juan@example.com"
                                     />
+                                    {errors.email && (
+                                        <p className="mt-1 text-sm text-red-600">
+                                            {errors.email}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -258,12 +280,24 @@ export default function Contact() {
                                     type="text"
                                     id="subject"
                                     name="subject"
-                                    value={formData.subject}
-                                    onChange={handleChange}
+                                    value={data.subject}
+                                    onChange={(e) =>
+                                        setData('subject', e.target.value)
+                                    }
+                                    maxLength={200}
                                     required
-                                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-slate-900 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+                                    className={`w-full rounded-xl border-2 ${
+                                        errors.subject
+                                            ? 'border-red-500'
+                                            : 'border-slate-200'
+                                    } bg-white px-4 py-3 text-slate-900 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 focus:outline-none`}
                                     placeholder="How can we help you?"
                                 />
+                                {errors.subject && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.subject}
+                                    </p>
+                                )}
                             </div>
 
                             <div>
@@ -276,21 +310,40 @@ export default function Contact() {
                                 <textarea
                                     id="message"
                                     name="message"
-                                    value={formData.message}
-                                    onChange={handleChange}
+                                    value={data.message}
+                                    onChange={(e) =>
+                                        setData('message', e.target.value)
+                                    }
+                                    maxLength={2000}
                                     required
                                     rows={6}
-                                    className="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-slate-900 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+                                    className={`w-full rounded-xl border-2 ${
+                                        errors.message
+                                            ? 'border-red-500'
+                                            : 'border-slate-200'
+                                    } bg-white px-4 py-3 text-slate-900 transition-all focus:border-blue-600 focus:ring-4 focus:ring-blue-100 focus:outline-none`}
                                     placeholder="Tell us more about your inquiry..."
                                 />
+                                <div className="mt-1 flex items-center justify-between">
+                                    {errors.message ? (
+                                        <p className="text-sm text-red-600">
+                                            {errors.message}
+                                        </p>
+                                    ) : (
+                                        <span className="text-xs text-slate-500">
+                                            {data.message.length}/2000
+                                            characters
+                                        </span>
+                                    )}
+                                </div>
                             </div>
 
                             <button
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={processing}
                                 className="w-full rounded-xl bg-blue-600 px-8 py-4 text-sm font-black text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                {isSubmitting ? 'Sending...' : 'Send Message'}
+                                {processing ? 'Sending...' : 'Send Message'}
                             </button>
 
                             <p className="text-center text-xs text-slate-500">
@@ -389,7 +442,7 @@ export default function Contact() {
             </section>
 
             {/* Footer */}
-           <Footer/>
+            <Footer />
         </div>
     );
 }

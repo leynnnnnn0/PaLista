@@ -3,6 +3,7 @@
 use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\MyPautangController;
 use App\Http\Controllers\PromissoryNoteController;
 use Illuminate\Support\Facades\Route;
@@ -20,11 +21,18 @@ Route::get('/sitemap.xml', function () {
             'lastmod' => now()->toAtomString()
         ],
         [
+            'loc' => url('/features'),
+            'priority' => '0.9', // Changed from '2.0' (max is 1.0)
+            'changefreq' => 'monthly',
+            'lastmod' => now()->toAtomString()
+        ],
+        [
             'loc' => url('/pricing'),
             'priority' => '0.8', // Changed from '2.0' (max is 1.0)
             'changefreq' => 'monthly',
             'lastmod' => now()->toAtomString()
         ],
+
         [
             'loc' => url('/about-us'),
             'priority' => '0.7',
@@ -48,6 +56,7 @@ Route::get('/robots.txt', function () {
     $content = "User-agent: *\n";
     $content .= "Allow: /\n";
     $content .= "Disallow: /dashboard\n";
+    $content .= "Disallow: /features\n";
     $content .= "Disallow: /my-pautang\n";
     $content .= "Disallow: /borrowers\n";
     $content .= "Disallow: /finance\n";
@@ -82,6 +91,9 @@ Route::get('/contact', function () {
 Route::get('/features', function () {
     return Inertia::render('features');
 })->name('features');
+
+Route::post('/contact', [MessageController::class, 'store'])
+    ->name('contact.store');
 
 // Protected routes
 Route::middleware(['auth', 'verified'])->group(function () {
