@@ -327,8 +327,9 @@ export default function Dashboard({
                                                 paginatedSchedules.map(
                                                     (schedule) => (
                                                         <tr
+                                                        onClick={() => router.get(`/my-pautang/${schedule.loan_id}`)}
                                                             key={schedule.id}
-                                                            className="hover:bg-slate-50"
+                                                            className="hover:bg-slate-50 cursor-pointer"
                                                         >
                                                             <td className="px-4 py-3 font-medium text-slate-900">
                                                                 {
@@ -388,6 +389,7 @@ export default function Dashboard({
                                 ) : (
                                     paginatedSchedules.map((schedule) => (
                                         <Card
+                                        onClick={() => router.get(`/my-pautang/${schedule.loan_id}`)}
                                             key={schedule.id}
                                             className="mb-3 border-none shadow-sm ring-1 ring-slate-200"
                                         >
