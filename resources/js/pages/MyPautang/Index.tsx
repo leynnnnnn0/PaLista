@@ -25,6 +25,7 @@ import {
 import Pagination from '@/components/pagination';
 import { BreadcrumbItem, Loan, Paginated } from '@/types';
 import { Eye, Filter, Plus, Search } from 'lucide-react';
+import PageHeader from '@/components/page-header';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Loans',
@@ -131,27 +132,20 @@ export default function Index({ loans, filters }: PageProps) {
             <Head title="My Pautangs" />
             <div className="flex-1 space-y-8 p-5 md:p-8">
                 {/* Page Header */}
-                <div className="flex flex-col items-start justify-between space-y-2 md:flex-row md:items-center md:space-y-0">
-                    <div className="w-full md:w-auto">
-                        <h2 className="text-lg md:text-3xl font-bold tracking-tight">
-                            My Pautangs
-                        </h2>
-                        <p className="text-xs md:text-base text-muted-foreground">
-                            Manage your lending portfolio and track collection
-                            aging.
-                        </p>
-                    </div>
-                    <div className="mt-3 flex items-center space-x-2 md:mt-0">
-                        <Button
-                            className="cursor-pointer"
-                            size="sm"
-                            onClick={() => router.get('/my-pautang/create')}
-                        >
-                            <Plus className="mr-2 h-4 w-4" />
-                            New Loan
-                        </Button>
-                    </div>
-                </div>
+                <PageHeader
+                    title="My Pautangs"
+                    subtitle=" Manage your lending portfolio and track collection
+                            aging."
+                >
+                    <Button
+                        className="cursor-pointer"
+                        size="sm"
+                        onClick={() => router.get('/my-pautang/create')}
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        New Loan
+                    </Button>
+                </PageHeader>
 
                 {/* Filters Row */}
                 <div className="flex flex-col gap-4 md:flex-row">

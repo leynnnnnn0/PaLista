@@ -3,18 +3,8 @@ import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 
 // Shadcn UI Components
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
     Table,
@@ -26,20 +16,17 @@ import {
 } from '@/components/ui/table';
 
 // Icons
+import PageHeader from '@/components/page-header';
+import { Borrower, BreadcrumbItem, Paginated } from '@/types';
 import {
-    ExternalLink,
     Eye,
     History,
-    Mail,
-    MoreHorizontal,
     Pencil,
-    Phone,
     Search,
     ShieldAlert,
     ShieldCheck,
     UserPlus,
 } from 'lucide-react';
-import { Borrower, BreadcrumbItem, Paginated } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -52,10 +39,8 @@ interface PageProps {
     borrowers: Paginated<Borrower>;
 }
 
-export default function BorrowersIndex({borrowers}: PageProps) {
+export default function BorrowersIndex({ borrowers }: PageProps) {
     const [searchTerm, setSearchTerm] = useState('');
-
-    
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-PH', {
@@ -71,16 +56,11 @@ export default function BorrowersIndex({borrowers}: PageProps) {
 
             <div className="flex-1 space-y-8 p-8 pt-6">
                 {/* Page Header */}
-                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                    <div>
-                        <h2 className="text-3xl font-bold tracking-tight">
-                            Borrower Directory
-                        </h2>
-                        <p className="font-medium text-muted-foreground">
-                            Manage your client database and review credit
-                            reputations.
-                        </p>
-                    </div>
+                <PageHeader
+                    title="Borrower Directory"
+                    subtitle="Manage your client database and review credit
+                            reputations."
+                >
                     <Button
                         className="h-10 cursor-pointer bg-primary px-4 shadow-sm hover:bg-blue-700"
                         onClick={() => router.get('/borrowers/create')}
@@ -88,7 +68,7 @@ export default function BorrowersIndex({borrowers}: PageProps) {
                         <UserPlus className="mr-2 h-4 w-4" />
                         Add New Borrower
                     </Button>
-                </div>
+                </PageHeader>
 
                 {/* Toolbar */}
                 <div className="flex items-center justify-between gap-4">

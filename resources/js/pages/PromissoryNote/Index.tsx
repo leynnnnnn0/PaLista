@@ -1,3 +1,4 @@
+import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -107,17 +108,10 @@ export default function Index({ promissoryNote }: PageProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Promissory Note" />
 
-            <div className="space-y-5 p-6">
-                <div className="flex items-center justify-between space-y-2">
-                    <div>
-                        <h2 className="text-3xl font-bold tracking-tight">
-                            Promissory Note
-                        </h2>
-                        <p className="text-muted-foreground">
-                            Configure your promissory note details.
-                        </p>
-                    </div>
-                </div>
+            <div className="space-y-2 md:space-y-5 p-6">
+                <PageHeader title="Promissory Note" subtitle=" Configure your promissory note details.">
+                    <div></div>
+                </PageHeader>
                 {/* Editable Fields Form */}
                 <Card className="mb-8">
                     <CardHeader>

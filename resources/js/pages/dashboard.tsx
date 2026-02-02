@@ -1,3 +1,4 @@
+import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -168,16 +169,11 @@ export default function Dashboard({
             <Head title="Dashboard" />
             <div className="min-h-screen space-y-8 bg-slate-50/50 p-6 lg:p-10">
                 {/* Header */}
-                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                            Portfolio Overview
-                        </h1>
-                        <p className="font-medium text-slate-500">
-                            Monitoring {stats.activeAccounts} active loans
-                            across {stats.totalBorrowers} borrowers.
-                        </p>
-                    </div>
+                <PageHeader
+                    title="Portfolio Overview"
+                    subtitle={`Monitoring ${stats.activeAccounts} active loans
+                            across ${stats.totalBorrowers} borrowers.`}
+                >
                     <Button
                         className="mt-2 w-full cursor-pointer md:mt-0 md:w-auto"
                         size="sm"
@@ -186,7 +182,8 @@ export default function Dashboard({
                         <Plus className="mr-2 h-4 w-4" />
                         New Loan
                     </Button>
-                </div>
+                </PageHeader>
+
 
                 {/* Stat Grid */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

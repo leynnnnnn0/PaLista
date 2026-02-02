@@ -1,3 +1,4 @@
+import PageHeader from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -143,20 +144,14 @@ export default function Finance({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Finance" />
 
-            <div className="flex-1 space-y-8 p-4 pt-6 sm:p-8">
+            <div className="flex-1 space-y-4 md:space-y-8 p-4 pt-6 sm:p-8">
                 {/* Header Section */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                                Finance Analytics
-                            </h2>
-                            <p className="text-sm font-medium text-muted-foreground">
-                                Real-time tracking of profit margins and
-                                collection cycles.
-                            </p>
-                        </div>
-                    </div>
+                
+                <div className="space-y-2 md:space-y-4">
+                       <PageHeader title="Finance Analytics" subtitle="Real-time tracking of profit margins and
+                                collection cycles.">
+                                    <div></div>
+                                </PageHeader>
 
                     {/* Date Filter Section */}
                     <Card className="border-slate-200 bg-slate-50 shadow-none">
