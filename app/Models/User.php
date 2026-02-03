@@ -65,4 +65,11 @@ class User extends Authenticatable implements Auditable
     {
         return $this->hasMany(Borrower::class);
     }
+
+    public function routeNotificationForMail($notification)
+    {
+        // Return email address
+        return $this->email;
+    }
+
 }

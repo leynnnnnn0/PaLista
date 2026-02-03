@@ -131,5 +131,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
 });
+// In routes/web.php
+use App\Mail\DueLoanReminderMail;
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-email-config', function () {
+    try {
+        Mail::raw('Test email from MyPautangLog!', function ($message) {
+            $message->to('nathanielalvarez1234569@gmail.com')
+                ->subject('Test Email');
+        });
+
+        return 'Email sent! Check your inbox.';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
 
 require __DIR__ . '/settings.php';
