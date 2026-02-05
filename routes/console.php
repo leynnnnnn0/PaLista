@@ -96,3 +96,6 @@ Artisan::command('loans:test-reminders', function () {
     $this->info("Total users to notify: {$loansByUser->count()}");
 })->purpose('Test loan reminders without sending emails');
 
+Schedule::command('loans:send-reminders')
+    ->dailyAt('08:00')
+    ->timezone('Asia/Manila');

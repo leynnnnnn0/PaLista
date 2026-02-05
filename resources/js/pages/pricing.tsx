@@ -127,36 +127,7 @@ export default function Pricing() {
                     pro: true,
                 },
                 {
-                    name: 'SMS Notifications',
-                    free: false,
-                    premium: false,
-                    pro: true,
-                },
-                {
                     name: 'Push Notifications',
-                    free: false,
-                    premium: false,
-                    pro: true,
-                },
-            ],
-        },
-        {
-            category: 'Reports & Documents',
-            features: [
-                {
-                    name: 'PDF Report Generation',
-                    free: false,
-                    premium: true,
-                    pro: true,
-                },
-                {
-                    name: 'Advanced Analytics',
-                    free: false,
-                    premium: false,
-                    pro: true,
-                },
-                {
-                    name: 'Custom Reports',
                     free: false,
                     premium: false,
                     pro: true,
