@@ -151,7 +151,7 @@ class MyPautangController extends Controller
             'country' => $validated['country'] ?? null,
         ]) : Borrower::findOrFail($validated['borrower_id']);
 
-
+     
 
         $loan = $borrower->loans()->create([
             'amount' => $validated['principal_amount'],

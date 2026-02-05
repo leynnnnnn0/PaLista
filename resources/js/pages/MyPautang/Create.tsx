@@ -54,7 +54,7 @@ export default function Create() {
     const [firstPaymentDate, setFirstPaymentDate] = useState('');
     const [firstPaymentDateError, setFirstPaymentDateError] = useState('');
     const [transactionDateError, setTransactionDateError] = useState('');
-    const [isExistingBorrower, setIsExistingBorrower] = useState(0);
+    const [isExistingBorrower, setIsExistingBorrower] = useState(false);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -95,7 +95,7 @@ export default function Create() {
         setIsExistingBorrower(borrower.id);
         setData({
             ...data,
-            is_existing_borrower: borrower.id,
+            is_existing_borrower: true,
             borrower_id: borrower.id,
             first_name: borrower.first_name,
             last_name: borrower.last_name,
@@ -120,10 +120,10 @@ export default function Create() {
         setSearchQuery('');
         setSearchResults([]);
         setShowResults(false);
-        setIsExistingBorrower(0);
+        setIsExistingBorrower(false);
         setData({
             ...data,
-            is_existing_borrower: 0,
+            is_existing_borrower: false,
             borrower_id: '',
             first_name: '',
             last_name: '',
@@ -181,7 +181,7 @@ export default function Create() {
         transaction_date: getTodayDate(),
         documents: [],
         payment_schedule: [],
-        is_existing_borrower: 0,
+        is_existing_borrower: false,
         borrower_id: '',
     });
 
