@@ -3,12 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Borrower;
+use App\Services\CreditScoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class BorrowerController extends Controller
 {
+    protected $creditScoreService;
+
+    public function __construct(CreditScoreService $creditScoreService)
+    {
+        $this->creditScoreService = $creditScoreService;
+    }
+
     public function index()
     {
         $borrowers = Borrower::with('loans.payment_schedules.payment_histories')
@@ -33,11 +41,18 @@ class BorrowerController extends Controller
 
     public function show(Borrower $borrower)
     {
-        if($borrower->user_id != Auth::id()) return response(403);
+        if ($borrower->user_id != Auth::id()) {
+            return response('Forbidden', 403);
+        }
+
         $borrower->load('references', 'loans.payment_schedules.payment_histories', 'documents');
+
+        // Calculate credit score
+        $creditScore = $this->creditScoreService->calculateCreditScore($borrower);
 
         return Inertia::render('Borrowers/Show', [
             'borrower' => $borrower,
+            'creditScore' => $creditScore,
         ]);
     }
 
