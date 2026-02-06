@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 // Shadcn UI Components
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -37,10 +37,30 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface PageProps {
     borrowers: Paginated<Borrower>;
+    filters: {
+        search?: string;
+    };
 }
 
-export default function BorrowersIndex({ borrowers }: PageProps) {
-    const [searchTerm, setSearchTerm] = useState('');
+export default function BorrowersIndex({ borrowers, filters }: PageProps) {
+
+     const [searchTerm, setSearchTerm] = useState(filters.search || '');
+
+      const debouncedSearch = useDebouncedCallback((value: string) => {
+          router.get(
+              '/borrowers',
+              { search: value },
+              {
+                  preserveState: true,
+                  preserveScroll: true,
+                  replace: true,
+              },
+          );
+      }, 300);
+
+      useEffect(() => {
+          debouncedSearch(searchTerm);
+      }, [searchTerm]);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-PH', {

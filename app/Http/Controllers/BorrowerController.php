@@ -17,12 +17,22 @@ class BorrowerController extends Controller
         $this->creditScoreService = $creditScoreService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search');
+
         $borrowers = Borrower::with('loans.payment_schedules.payment_histories')
-        ->where('user_id', Auth::id())
-        ->latest()
-        ->paginate(10);
+            ->where('user_id', Auth::id())
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereAny(['first_name', 'last_name'], 'like', "%{$search}%")
+                        ->orWhere('contact_number', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString(); 
         $borrowers->transform(function ($borrower) {
             return [
                 'id' => $borrower->id,
@@ -36,6 +46,7 @@ class BorrowerController extends Controller
 
         return Inertia::render('Borrowers/Index', [
             'borrowers' => $borrowers,
+            'filters' => $request->only('search'),
         ]);
     }
 
