@@ -11,7 +11,7 @@ use Inertia\Inertia;
 class BorrowerController extends Controller
 {
     protected $creditScoreService;
-
+    // todo
     public function __construct(CreditScoreService $creditScoreService)
     {
         $this->creditScoreService = $creditScoreService;
