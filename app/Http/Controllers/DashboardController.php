@@ -65,7 +65,6 @@ class DashboardController extends Controller
             ->map(function ($schedule) use ($today) {
                 $totalPaid = $schedule->payment_histories->sum('amount_paid');
                 $remainingAmount = max(0, $schedule->total_due - $totalPaid);
-
                 return [
                     'id' => $schedule->id,
                     'borrower_name' => $schedule->loan->borrower->first_name . ' ' . $schedule->loan->borrower->last_name,
@@ -75,7 +74,7 @@ class DashboardController extends Controller
                     'total_due' => $schedule->total_due,
                     'paid_amount' => $totalPaid,
                     'remaining_amount' => $remainingAmount,
-                    'status' => $schedule->status === 'paid' ? 'paid' : ($schedule->due_date < $today ? 'overdue' : 'pending'),
+                    'status' => $schedule->status === 'paid' ? 'paid' : ($schedule->due_date == $today->format('Y-m-d') ? 'due' : 'overdue'),
                     'penalty_amount' => $schedule->penalty_amount,
                     'rebate_amount' => $schedule->rebate_amount,
                 ];

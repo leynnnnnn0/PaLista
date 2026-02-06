@@ -36,6 +36,16 @@ class MyPautangController extends Controller
         // Filter by aging (due dates)
         if ($request->filled('aging') && $request->aging !== 'aging') {
             switch ($request->aging) {
+                case 'due':
+                    // Due today
+                    $query->whereHas('payment_schedules', function ($q) {
+                        $q->where('status', '!=', 'paid')
+                            ->where('due_date', [
+                                Carbon::today()
+                            ]);
+                    });
+                    break;
+
                 case 'soon':
                     // Due in next 7 days
                     $query->whereHas('payment_schedules', function ($q) {

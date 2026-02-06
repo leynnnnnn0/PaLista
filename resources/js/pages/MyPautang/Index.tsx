@@ -183,6 +183,7 @@ export default function Index({ loans, filters }: PageProps) {
                                 <SelectItem value="aging">
                                     Filter by Aging
                                 </SelectItem>
+                                <SelectItem value="due">Due Today</SelectItem>
                                 <SelectItem value="soon">
                                     Due in 7 days
                                 </SelectItem>
